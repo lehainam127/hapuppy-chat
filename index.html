@@ -1,0 +1,3665 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Hapuppy Chat</title>
+
+<!-- PWA core -->
+<meta name="application-name" content="Hapuppy Chat">
+<meta name="description" content="Giao diện chat cho Hapuppy API - hỗ trợ 90+ model AI">
+<meta name="theme-color" content="#0a0a0c" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#fcfbf8" media="(prefers-color-scheme: light)">
+<meta name="color-scheme" content="dark light">
+
+<!-- iOS PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hapuppy">
+<meta name="format-detection" content="telephone=no">
+
+<!-- Favicon (browser tab) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%237c3aed'/%3E%3Ctext x='50' y='72' font-size='62' text-anchor='middle'%3E🐶%3C/text%3E%3C/svg%3E">
+
+<!-- Apple touch icons (Add to Home Screen) - SVG inline để không cần file riêng -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%237c3aed'/%3E%3Ctext x='90' y='130' font-size='110' text-anchor='middle'%3E🐶%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" sizes="152x152" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 152 152'%3E%3Crect width='152' height='152' rx='34' fill='%237c3aed'/%3E%3Ctext x='76' y='110' font-size='92' text-anchor='middle'%3E🐶%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" sizes="167x167" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 167 167'%3E%3Crect width='167' height='167' rx='38' fill='%237c3aed'/%3E%3Ctext x='83.5' y='121' font-size='102' text-anchor='middle'%3E🐶%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%237c3aed'/%3E%3Ctext x='90' y='130' font-size='110' text-anchor='middle'%3E🐶%3C/text%3E%3C/svg%3E">
+
+<!-- PWA manifest (inline base64) -->
+<link rel="manifest" href='data:application/manifest+json;charset=utf-8,{"name":"Hapuppy Chat","short_name":"Hapuppy","description":"Chat client cho Hapuppy API","start_url":"./","scope":"./","display":"standalone","orientation":"any","background_color":"%230a0a0c","theme_color":"%237c3aed","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 192 192%27%3E%3Crect width=%27192%27 height=%27192%27 rx=%2742%27 fill=%27%237c3aed%27/%3E%3Ctext x=%2796%27 y=%27138%27 font-size=%27118%27 text-anchor=%27middle%27%3E🐶%3C/text%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml","purpose":"any maskable"},{"src":"data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 512 512%27%3E%3Crect width=%27512%27 height=%27512%27 rx=%27112%27 fill=%27%237c3aed%27/%3E%3Ctext x=%27256%27 y=%27370%27 font-size=%27314%27 text-anchor=%27middle%27%3E🐶%3C/text%3E%3C/svg%3E","sizes":"512x512","type":"image/svg+xml","purpose":"any maskable"}]}'>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<!-- Markdown + Code highlight + Math -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github-dark.min.css" id="hljs-theme">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/common.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+
+<style>
+/* ================================================
+   RESET & DESIGN TOKENS
+   ================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Spacing */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px; --sp-10: 40px;
+  --sp-12: 48px; --sp-16: 64px;
+
+  /* Radius */
+  --r-sm: 6px; --r-md: 10px; --r-lg: 14px; --r-xl: 20px; --r-full: 999px;
+
+  /* Motion */
+  --ease: cubic-bezier(.2, .8, .2, 1);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --dur-fast: 120ms; --dur: 220ms; --dur-slow: 420ms;
+
+  /* Z */
+  --z-sidebar: 10; --z-modal: 100; --z-toast: 200;
+}
+
+[data-theme="dark"] {
+  --bg: #0a0a0c;
+  --bg-raised: #111114;
+  --surface: #16161a;
+  --surface-2: #1d1d22;
+  --surface-3: #26262d;
+  --border: #2a2a31;
+  --border-strong: #3a3a42;
+  --text: #ececf1;
+  --text-2: #b4b4bd;
+  --text-3: #7a7a85;
+  --accent: #b794f6;
+  --accent-hover: #c9a8fa;
+  --accent-muted: rgba(183, 148, 246, .15);
+  --accent-glow: rgba(183, 148, 246, .4);
+  --success: #68d391;
+  --warn: #f6ad55;
+  --danger: #fc8181;
+  --scroll-thumb: #3a3a42;
+  --code-bg: #0d0d10;
+  --msg-user-bg: #1a1a20;
+  --msg-assistant-bg: transparent;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.3);
+  --shadow-lg: 0 20px 40px rgba(0,0,0,.5);
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: #fcfbf8;
+  --bg-raised: #ffffff;
+  --surface: #f5f3ee;
+  --surface-2: #ecebe4;
+  --surface-3: #e2e0d7;
+  --border: #e2e0d7;
+  --border-strong: #c8c5b8;
+  --text: #1f1d18;
+  --text-2: #5c594f;
+  --text-3: #8a8679;
+  --accent: #7c3aed;
+  --accent-hover: #6d28d9;
+  --accent-muted: rgba(124, 58, 237, .12);
+  --accent-glow: rgba(124, 58, 237, .25);
+  --success: #059669;
+  --warn: #d97706;
+  --danger: #dc2626;
+  --scroll-thumb: #c8c5b8;
+  --code-bg: #f5f3ee;
+  --msg-user-bg: #f5f3ee;
+  --msg-assistant-bg: transparent;
+  --shadow-sm: 0 1px 2px rgba(40, 35, 25, .05);
+  --shadow-md: 0 4px 12px rgba(40, 35, 25, .08);
+  --shadow-lg: 0 20px 40px rgba(40, 35, 25, .15);
+  color-scheme: light;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+  /* iOS: prevent rubber-band overscroll */
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+  /* iOS: prevent text selection on long-press where not needed */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Allow selection in text content */
+.message-content, .input-box, .input-field, .system-prompt-box, textarea, input[type="text"], input[type="password"] {
+  -webkit-touch-callout: default;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* iOS safe area for notch */
+.app {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+.top-bar {
+  padding-top: calc(var(--sp-3) + env(safe-area-inset-top));
+}
+.input-area {
+  padding-bottom: calc(var(--sp-4) + env(safe-area-inset-bottom));
+}
+.sidebar-header {
+  padding-top: calc(var(--sp-4) + env(safe-area-inset-top));
+}
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, textarea { font-family: inherit; color: inherit; }
+a { color: var(--accent); }
+::selection { background: var(--accent-muted); color: var(--text); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+/* ================================================
+   APP LAYOUT
+   ================================================ */
+.app {
+  display: grid;
+  grid-template-columns: 280px 1fr 320px;
+  grid-template-areas: "sidebar main panel";
+  height: 100vh;
+  transition: grid-template-columns var(--dur) var(--ease);
+}
+.app.sidebar-collapsed { grid-template-columns: 0 1fr 320px; }
+.app.panel-collapsed { grid-template-columns: 280px 1fr 0; }
+.app.sidebar-collapsed.panel-collapsed { grid-template-columns: 0 1fr 0; }
+
+@media (max-width: 1100px) {
+  .app { grid-template-columns: 280px 1fr 0; }
+  .app.show-panel { grid-template-columns: 0 1fr 320px; }
+}
+@media (max-width: 768px) {
+  .app { grid-template-columns: 0 1fr 0; }
+  .app.show-sidebar { grid-template-columns: 280px 1fr 0; }
+  .app.show-panel { grid-template-columns: 0 1fr 320px; }
+}
+
+/* ================================================
+   SIDEBAR
+   ================================================ */
+.sidebar {
+  grid-area: sidebar;
+  background: var(--bg-raised);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+.sidebar-header {
+  padding: var(--sp-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  border-bottom: 1px solid var(--border);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+.brand-logo {
+  width: 32px; height: 32px;
+  border-radius: var(--r-md);
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 18px;
+  box-shadow: 0 0 0 1px var(--accent-muted), 0 8px 20px -8px var(--accent-glow);
+}
+
+.new-chat-btn {
+  margin: var(--sp-3) var(--sp-4);
+  padding: 10px var(--sp-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  background: var(--accent);
+  color: white;
+  font-weight: 500;
+  border-radius: var(--r-md);
+  transition: all var(--dur-fast) var(--ease);
+  box-shadow: 0 2px 8px -2px var(--accent-glow);
+}
+.new-chat-btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.new-chat-btn:active { transform: translateY(0); }
+
+.sidebar-search {
+  margin: 0 var(--sp-4) var(--sp-3);
+  position: relative;
+}
+.sidebar-search input {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 13px;
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+.sidebar-search input:focus { border-color: var(--accent); }
+.sidebar-search svg {
+  position: absolute;
+  left: 12px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-3);
+}
+
+.chat-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 var(--sp-2);
+}
+.chat-group-label {
+  padding: var(--sp-3) var(--sp-3) var(--sp-1);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-3);
+}
+.chat-item {
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+  font-size: 13.5px;
+  color: var(--text-2);
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.chat-item:hover { background: var(--surface); color: var(--text); }
+.chat-item.active { background: var(--accent-muted); color: var(--text); }
+.chat-item-title { flex: 1; text-overflow: ellipsis; overflow: hidden; }
+.chat-item-actions {
+  display: none;
+  gap: 2px;
+}
+.chat-item:hover .chat-item-actions { display: flex; }
+.chat-item-actions button {
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--text-3);
+  display: grid;
+  place-items: center;
+}
+.chat-item-actions button:hover { background: var(--surface-2); color: var(--text); }
+
+.sidebar-footer {
+  padding: var(--sp-3) var(--sp-4);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+.sidebar-footer button {
+  flex: 1;
+  padding: 8px;
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: 13px;
+  color: var(--text-2);
+  transition: background var(--dur-fast) var(--ease);
+  justify-content: center;
+}
+.sidebar-footer button:hover { background: var(--surface); color: var(--text); }
+
+/* ================================================
+   MAIN
+   ================================================ */
+.main {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+
+.top-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.icon-btn {
+  width: 34px; height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-sm);
+  color: var(--text-2);
+  transition: all var(--dur-fast) var(--ease);
+}
+.icon-btn:hover { background: var(--surface); color: var(--text); }
+.icon-btn.active { color: var(--accent); background: var(--accent-muted); }
+
+.model-picker {
+  flex: 1;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 8px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease);
+  min-width: 0;
+}
+.model-picker:hover { background: var(--surface-2); border-color: var(--border-strong); }
+.model-picker-icon { flex-shrink: 0; font-size: 16px; }
+.model-picker-name {
+  flex: 1;
+  font-weight: 500;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.model-picker-price {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  padding: 2px 6px;
+  background: var(--bg);
+  border-radius: 4px;
+}
+.model-picker-chevron { color: var(--text-3); flex-shrink: 0; }
+
+.top-status {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-left: auto;
+}
+.cost-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-full);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-2);
+}
+.cost-chip-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .4; } }
+
+/* Messages area */
+.messages-wrap {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+.messages {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: var(--sp-6) var(--sp-5) var(--sp-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+/* Welcome screen */
+.welcome {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-12) var(--sp-5);
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.welcome-title {
+  font-family: var(--font-sans);
+  font-size: 38px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--sp-3);
+  color: var(--text);
+}
+.welcome-subtitle {
+  font-size: 16px;
+  color: var(--text-2);
+  margin-bottom: var(--sp-8);
+  max-width: 560px;
+}
+.welcome-suggestions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--sp-3);
+  width: 100%;
+  max-width: 680px;
+}
+.suggestion-card {
+  padding: var(--sp-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  text-align: left;
+  transition: all var(--dur) var(--ease);
+  cursor: pointer;
+}
+.suggestion-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  background: var(--surface-2);
+  box-shadow: var(--shadow-md);
+}
+.suggestion-icon { font-size: 22px; margin-bottom: var(--sp-2); }
+.suggestion-title { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
+.suggestion-desc { font-size: 12.5px; color: var(--text-3); }
+
+/* Message bubble */
+.message {
+  display: flex;
+  gap: var(--sp-3);
+  animation: msgIn var(--dur-slow) var(--ease-out);
+}
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.message-avatar {
+  width: 32px; height: 32px;
+  border-radius: var(--r-sm);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+.message.user .message-avatar {
+  background: var(--surface-2);
+  color: var(--text-2);
+}
+.message.assistant .message-avatar {
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  color: white;
+  box-shadow: 0 2px 8px -2px var(--accent-glow);
+}
+.message.system .message-avatar {
+  background: var(--surface-2);
+  color: var(--warn);
+}
+
+.message-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.message-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-size: 12px;
+  color: var(--text-3);
+}
+.message-role { font-weight: 600; color: var(--text-2); font-size: 13px; }
+.message-model { font-family: var(--font-mono); font-size: 11px; padding: 2px 6px; background: var(--surface); border-radius: 4px; }
+
+.message-content {
+  background: var(--msg-user-bg);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-md);
+  font-size: 14.5px;
+  line-height: 1.6;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+.message.assistant .message-content {
+  background: var(--msg-assistant-bg);
+  padding: 0;
+  font-size: 15px;
+}
+.message.user .message-content { white-space: pre-wrap; }
+
+/* Markdown styles inside assistant messages */
+.md-content p { margin: 0 0 .8em 0; }
+.md-content p:last-child { margin-bottom: 0; }
+.md-content h1, .md-content h2, .md-content h3, .md-content h4 {
+  margin: 1.5em 0 .5em 0;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.md-content h1 { font-size: 1.5em; }
+.md-content h2 { font-size: 1.3em; }
+.md-content h3 { font-size: 1.15em; }
+.md-content h4 { font-size: 1em; }
+.md-content ul, .md-content ol { margin: 0 0 .8em 0; padding-left: 1.5em; }
+.md-content li { margin-bottom: .3em; }
+.md-content li > ul, .md-content li > ol { margin-bottom: 0; margin-top: .3em; }
+.md-content blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 4px 0 4px var(--sp-3);
+  color: var(--text-2);
+  margin: 0 0 .8em 0;
+}
+.md-content code:not(pre code) {
+  background: var(--surface-2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: .88em;
+  border: 1px solid var(--border);
+}
+.md-content pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  margin: 0 0 .8em 0;
+  position: relative;
+  overflow: hidden;
+}
+.md-content pre .code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-3);
+  font-family: var(--font-mono);
+}
+.md-content pre code {
+  display: block;
+  padding: var(--sp-3) var(--sp-4);
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  background: transparent !important;
+}
+.copy-code-btn {
+  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--text-3);
+  border-radius: 4px;
+  transition: all var(--dur-fast) var(--ease);
+  font-family: var(--font-mono);
+}
+.copy-code-btn:hover { background: var(--surface-2); color: var(--text); }
+.md-content table {
+  border-collapse: collapse;
+  margin: 0 0 .8em 0;
+  width: 100%;
+  font-size: 13.5px;
+}
+.md-content th, .md-content td {
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  text-align: left;
+}
+.md-content th { background: var(--surface); font-weight: 600; }
+.md-content a { color: var(--accent); text-decoration: underline; text-decoration-color: var(--accent-muted); }
+.md-content a:hover { text-decoration-color: var(--accent); }
+.md-content hr { border: none; border-top: 1px solid var(--border); margin: 1.5em 0; }
+.md-content img { max-width: 100%; border-radius: var(--r-md); margin: .4em 0; }
+
+/* Message images */
+.message-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+}
+.message-image {
+  max-width: 280px;
+  max-height: 280px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease);
+}
+.message-image:hover { transform: scale(1.02); }
+
+.message-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+}
+.message-file {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 6px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 13px;
+}
+.message-file-icon { color: var(--accent); }
+
+/* Message actions */
+.message-actions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity var(--dur-fast) var(--ease);
+  margin-top: 4px;
+}
+.message:hover .message-actions { opacity: 1; }
+.msg-action-btn {
+  padding: 5px 10px;
+  font-size: 12px;
+  color: var(--text-3);
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: all var(--dur-fast) var(--ease);
+}
+.msg-action-btn:hover { background: var(--surface); color: var(--text); }
+
+/* Thinking indicator */
+.thinking {
+  display: inline-flex;
+  gap: 4px;
+  padding: var(--sp-3) 0;
+}
+.thinking span {
+  width: 6px; height: 6px;
+  background: var(--text-3);
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+.thinking span:nth-child(1) { animation-delay: -0.32s; }
+.thinking span:nth-child(2) { animation-delay: -0.16s; }
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0.7); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* Input area */
+.input-area {
+  flex-shrink: 0;
+  padding: var(--sp-2) var(--sp-5) var(--sp-4);
+  max-width: 820px;
+  margin: 0 auto;
+  width: 100%;
+  background: var(--bg);
+}
+.attachments-preview {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-2);
+}
+.attachment-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px 6px 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 12.5px;
+  max-width: 220px;
+}
+.attachment-thumb {
+  width: 32px; height: 32px;
+  border-radius: var(--r-sm);
+  object-fit: cover;
+  background: var(--surface);
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.attachment-info {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.attachment-size { color: var(--text-3); font-size: 11px; }
+.attachment-remove {
+  width: 20px; height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  color: var(--text-3);
+  flex-shrink: 0;
+}
+.attachment-remove:hover { background: var(--surface); color: var(--danger); }
+
+.input-wrapper {
+  position: relative;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  transition: all var(--dur-fast) var(--ease);
+  box-shadow: var(--shadow-md);
+}
+.input-wrapper.focused { border-color: var(--accent); box-shadow: var(--shadow-md), 0 0 0 3px var(--accent-muted); }
+.input-wrapper.drag-over { border-color: var(--accent); background: var(--accent-muted); }
+
+.input-box {
+  width: 100%;
+  padding: var(--sp-3) var(--sp-4) var(--sp-3);
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: 16px; /* 16px+ prevents iOS auto-zoom on focus */
+  line-height: 1.5;
+  min-height: 24px;
+  max-height: 240px;
+  color: var(--text);
+  display: block;
+}
+.input-box::placeholder { color: var(--text-3); }
+
+.input-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 4px 6px 6px;
+  border-top: 1px solid transparent;
+}
+.toolbar-spacer { flex: 1; }
+.tool-btn {
+  width: 32px; height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-sm);
+  color: var(--text-3);
+  transition: all var(--dur-fast) var(--ease);
+}
+.tool-btn:hover { background: var(--surface); color: var(--text); }
+.tool-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.send-btn {
+  width: 34px; height: 34px;
+  background: var(--accent);
+  color: white;
+  border-radius: var(--r-sm);
+  display: grid;
+  place-items: center;
+  transition: all var(--dur-fast) var(--ease);
+}
+.send-btn:hover { background: var(--accent-hover); transform: scale(1.05); }
+.send-btn:disabled { background: var(--surface-2); color: var(--text-3); cursor: not-allowed; transform: none; }
+.send-btn.stop { background: var(--danger); }
+.send-btn.stop:hover { background: var(--danger); filter: brightness(1.1); }
+
+.input-footer {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--text-3);
+  padding: 0 4px;
+}
+.input-footer kbd {
+  font-family: var(--font-mono);
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 10px;
+}
+
+/* ================================================
+   RIGHT PANEL
+   ================================================ */
+.right-panel {
+  grid-area: panel;
+  background: var(--bg-raised);
+  border-left: 1px solid var(--border);
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
+}
+.panel-section {
+  padding: var(--sp-4);
+  border-bottom: 1px solid var(--border);
+}
+.panel-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-3);
+  margin-bottom: var(--sp-3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.param-row {
+  margin-bottom: var(--sp-4);
+}
+.param-row:last-child { margin-bottom: 0; }
+.param-hint {
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: var(--text-3);
+  line-height: 1.5;
+}
+.param-hint b { color: var(--text-2); font-weight: 600; }
+.param-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: var(--text-2);
+}
+.param-value {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+}
+.slider {
+  width: 100%;
+  height: 4px;
+  background: var(--surface-2);
+  border-radius: var(--r-full);
+  outline: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px; height: 16px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: 2px solid var(--bg-raised);
+  box-shadow: 0 0 0 1px var(--border-strong);
+  cursor: grab;
+  transition: transform var(--dur-fast) var(--ease);
+}
+.slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+.slider::-moz-range-thumb {
+  width: 14px; height: 14px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: 2px solid var(--bg-raised);
+  box-shadow: 0 0 0 1px var(--border-strong);
+  cursor: grab;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-2);
+}
+.stat-card {
+  padding: var(--sp-3);
+  background: var(--surface);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+}
+.stat-label {
+  font-size: 11.5px;
+  color: var(--text-3);
+  margin-bottom: 4px;
+}
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.context-bar {
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: var(--r-full);
+  overflow: hidden;
+  margin-top: var(--sp-2);
+}
+.context-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--success), var(--accent));
+  transition: width var(--dur) var(--ease);
+}
+.context-bar-fill.warn { background: linear-gradient(90deg, var(--accent), var(--warn)); }
+.context-bar-fill.danger { background: linear-gradient(90deg, var(--warn), var(--danger)); }
+
+.system-prompt-box {
+  width: 100%;
+  padding: var(--sp-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 14px;
+  resize: vertical;
+  min-height: 80px;
+  font-family: var(--font-sans);
+  outline: none;
+}
+.system-prompt-box:focus { border-color: var(--accent); }
+
+/* On mobile, bump these textareas/inputs to 16px to prevent iOS auto-zoom */
+@media (max-width: 768px) {
+  .system-prompt-box,
+  .sidebar-search input,
+  .model-search input { font-size: 16px !important; }
+}
+
+.template-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: var(--sp-2);
+}
+.template-chip {
+  padding: 3px 10px;
+  font-size: 11.5px;
+  background: var(--surface-2);
+  border-radius: var(--r-full);
+  cursor: pointer;
+  color: var(--text-2);
+  transition: all var(--dur-fast) var(--ease);
+}
+.template-chip:hover { background: var(--accent-muted); color: var(--accent); }
+
+/* ================================================
+   MODAL
+   ================================================ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: var(--z-modal);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-4);
+  animation: fadeIn var(--dur) var(--ease);
+}
+.modal-backdrop.open { display: flex; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp var(--dur-slow) var(--ease-out);
+}
+@keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal.large { max-width: 720px; }
+.modal-header {
+  padding: var(--sp-4) var(--sp-5);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-title {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.modal-body {
+  padding: var(--sp-5);
+  overflow-y: auto;
+  flex: 1;
+}
+.modal-footer {
+  padding: var(--sp-4) var(--sp-5);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+}
+
+.field {
+  margin-bottom: var(--sp-4);
+}
+.field-label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: var(--text-2);
+  font-weight: 500;
+}
+.field-hint {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 6px;
+  line-height: 1.5;
+}
+.input-field {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 16px; /* 16px+ prevents iOS auto-zoom on focus */
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease);
+  font-family: var(--font-sans);
+}
+.input-field:focus { border-color: var(--accent); }
+.input-field.mono { font-family: var(--font-mono); font-size: 14px; }
+
+.input-with-action {
+  position: relative;
+}
+.input-with-action .input-field { padding-right: 76px; }
+.input-action-btn {
+  position: absolute;
+  right: 6px; top: 50%;
+  transform: translateY(-50%);
+  padding: 6px 10px;
+  font-size: 12px;
+  background: var(--surface-2);
+  border-radius: var(--r-sm);
+  color: var(--text-2);
+  transition: all var(--dur-fast) var(--ease);
+}
+.input-action-btn:hover { background: var(--accent-muted); color: var(--accent); }
+
+.btn {
+  padding: 8px 16px;
+  border-radius: var(--r-md);
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: all var(--dur-fast) var(--ease);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-primary:disabled { background: var(--surface-2); color: var(--text-3); cursor: not-allowed; }
+.btn-ghost { color: var(--text-2); }
+.btn-ghost:hover { background: var(--surface); color: var(--text); }
+.btn-danger { background: var(--danger); color: white; }
+
+/* Model picker modal */
+.model-search {
+  position: relative;
+  margin-bottom: var(--sp-3);
+}
+.model-search input {
+  width: 100%;
+  padding: 10px 14px 10px 40px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 14px;
+  outline: none;
+}
+.model-search input:focus { border-color: var(--accent); }
+.model-search svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-3); }
+
+.model-groups {
+  max-height: 52vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.model-group {
+  margin-bottom: var(--sp-4);
+}
+.model-group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px;
+  font-size: 12.5px;
+  color: var(--text-3);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.model-option {
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+  border: 1px solid transparent;
+}
+.model-option:hover { background: var(--surface); }
+.model-option.selected { background: var(--accent-muted); border-color: var(--accent); }
+.model-option.unavailable { opacity: 0.5; }
+.model-option.unavailable:hover { background: var(--surface); }
+.model-option-name {
+  flex: 1;
+  font-size: 14px;
+  font-family: var(--font-mono);
+}
+.model-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--text-3);
+}
+.model-status-dot.available { background: var(--success); box-shadow: 0 0 0 2px rgba(104, 211, 145, 0.2); }
+.model-status-dot.unavailable { background: var(--danger); }
+.model-status-dot.checking {
+  background: var(--warn);
+  animation: pulse 1s infinite;
+}
+.model-status-dot.unknown { background: var(--text-3); }
+
+.model-actions-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: var(--sp-3);
+  padding: 10px 12px;
+  background: var(--surface);
+  border-radius: var(--r-md);
+  font-size: 12.5px;
+  flex-wrap: wrap;
+}
+.model-actions-bar .btn { padding: 6px 12px; font-size: 12.5px; }
+.model-option-badge {
+  padding: 2px 7px;
+  font-size: 10.5px;
+  border-radius: var(--r-full);
+  font-weight: 500;
+}
+.badge-top { background: rgba(183, 148, 246, .2); color: var(--accent); }
+.badge-high { background: rgba(104, 211, 145, .15); color: var(--success); }
+.badge-mid { background: rgba(246, 173, 85, .15); color: var(--warn); }
+.badge-low { background: var(--surface-2); color: var(--text-3); }
+.model-option-price {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+/* Toast */
+.toast-container {
+  position: fixed;
+  top: var(--sp-4);
+  right: var(--sp-4);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  pointer-events: none;
+}
+.toast {
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-lg);
+  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: toastIn var(--dur) var(--ease-out);
+  min-width: 240px;
+  max-width: 400px;
+  pointer-events: auto;
+}
+@keyframes toastIn { from { transform: translateX(20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.toast.success { border-left: 3px solid var(--success); }
+.toast.error { border-left: 3px solid var(--danger); }
+.toast.warn { border-left: 3px solid var(--warn); }
+.toast.info { border-left: 3px solid var(--accent); }
+
+/* Image lightbox */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.9);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal);
+  cursor: zoom-out;
+  padding: var(--sp-5);
+}
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 100%; max-height: 100%; border-radius: var(--r-md); }
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .welcome-title { font-size: 40px; }
+  .messages { padding: var(--sp-4) var(--sp-3); }
+  .input-area { padding: 0 var(--sp-3) var(--sp-3); }
+  .top-bar { padding: var(--sp-2) var(--sp-3); }
+  .modal { max-width: 95vw; }
+  .sidebar { position: absolute; left: 0; top: 0; bottom: 0; width: 280px; z-index: var(--z-sidebar); box-shadow: var(--shadow-lg); }
+  .right-panel { position: absolute; right: 0; top: 0; bottom: 0; width: 320px; z-index: var(--z-sidebar); box-shadow: var(--shadow-lg); }
+}
+
+/* Misc */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: var(--sp-3) 0;
+}
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-size: 11px;
+  background: var(--surface-2);
+  border-radius: var(--r-full);
+  color: var(--text-2);
+}
+
+/* Streaming cursor */
+.stream-cursor::after {
+  content: '▍';
+  display: inline-block;
+  color: var(--accent);
+  animation: blink 1s infinite;
+  margin-left: 1px;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* KaTeX adjustments */
+.katex { font-size: 1em !important; }
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: .5em 0; }
+</style>
+</head>
+<body>
+
+<!-- Main app -->
+<div class="app" id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-logo">🐶</div>
+        <span>Hapuppy</span>
+      </div>
+      <button class="icon-btn" id="sidebarCollapseBtn" title="Ẩn sidebar (Ctrl+B)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      </button>
+    </div>
+    <button class="new-chat-btn" id="newChatBtn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Cuộc trò chuyện mới
+    </button>
+    <div class="sidebar-search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="chatSearch" placeholder="Tìm cuộc trò chuyện...">
+    </div>
+    <div class="chat-list" id="chatList"></div>
+    <div class="sidebar-footer">
+      <button id="openSettings" title="Cài đặt">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Cài đặt
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <header class="top-bar">
+      <button class="icon-btn" id="mobileSidebarBtn" title="Menu" style="display:none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="model-picker" id="modelPickerBtn">
+        <span class="model-picker-icon" id="modelPickerIcon">💬</span>
+        <span class="model-picker-name" id="modelPickerName">Chọn model...</span>
+        <span class="model-picker-price" id="modelPickerPrice"></span>
+        <svg class="model-picker-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="top-status">
+        <div class="cost-chip" id="costChip" title="Chi phí phiên (dựa trên multiplier Hapuppy)">
+          <span class="cost-chip-dot"></span>
+          <span id="costValue">0.00x</span>
+        </div>
+        <button class="icon-btn" id="themeToggle" title="Đổi giao diện sáng/tối">
+          <svg id="themeIconDark" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg id="themeIconLight" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
+        <button class="icon-btn" id="panelToggleBtn" title="Ẩn/hiện thông tin">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="messages-wrap" id="messagesWrap">
+      <div class="welcome" id="welcomeScreen">
+        <h1 class="welcome-title">Chào bạn</h1>
+        <p class="welcome-subtitle">Giao diện chat cho Hapuppy API. Hỗ trợ 90+ model, đầy đủ tính năng chat, upload ảnh, file, tạo ảnh, xuất dữ liệu.</p>
+        <div class="welcome-suggestions">
+          <div class="suggestion-card" data-prompt="Giải thích cho tôi về Transformer architecture trong 5 câu">
+            <div class="suggestion-icon">🧠</div>
+            <div class="suggestion-title">Giải thích khái niệm</div>
+            <div class="suggestion-desc">Transformer architecture là gì?</div>
+          </div>
+          <div class="suggestion-card" data-prompt="Viết hàm Python quicksort có docstring và type hints">
+            <div class="suggestion-icon">💻</div>
+            <div class="suggestion-title">Viết code</div>
+            <div class="suggestion-desc">Python quicksort có docstring</div>
+          </div>
+          <div class="suggestion-card" data-prompt="Tạo bảng so sánh 3 framework web phổ biến 2026">
+            <div class="suggestion-icon">📊</div>
+            <div class="suggestion-title">So sánh, phân tích</div>
+            <div class="suggestion-desc">3 framework web 2026</div>
+          </div>
+          <div class="suggestion-card" data-prompt="Dịch đoạn sau sang tiếng Anh chuyên nghiệp: ">
+            <div class="suggestion-icon">🌐</div>
+            <div class="suggestion-title">Dịch thuật</div>
+            <div class="suggestion-desc">Việt → Anh chuyên nghiệp</div>
+          </div>
+        </div>
+      </div>
+      <div class="messages" id="messages" style="display:none;"></div>
+    </div>
+
+    <div class="input-area">
+      <div class="attachments-preview" id="attachmentsPreview"></div>
+      <div class="input-wrapper" id="inputWrapper">
+        <textarea class="input-box" id="inputBox" rows="1" placeholder="Hỏi bất cứ điều gì..."></textarea>
+        <div class="input-toolbar">
+          <button class="tool-btn" id="attachImageBtn" title="Đính kèm ảnh">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </button>
+          <button class="tool-btn" id="attachFileBtn" title="Đính kèm file (txt, md, json, csv, pdf)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          </button>
+          <div class="toolbar-spacer"></div>
+          <span style="font-size:11.5px; color: var(--text-3); margin-right: 8px; font-family: var(--font-mono);" id="tokenCounter">0 tokens</span>
+          <button class="send-btn" id="sendBtn" disabled title="Gửi (Enter)">
+            <svg id="sendIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            <svg id="stopIcon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="input-footer">
+        <span><kbd>Enter</kbd> gửi · <kbd>Shift + Enter</kbd> xuống dòng · <kbd>/</kbd> tìm model · <kbd>Esc</kbd> dừng</span>
+        <span id="inputStatusRight"></span>
+      </div>
+    </div>
+  </main>
+
+  <!-- RIGHT PANEL -->
+  <aside class="right-panel" id="rightPanel">
+    <div class="panel-section">
+      <div class="panel-section-title">
+        System Prompt
+        <button class="icon-btn" id="resetSystemBtn" title="Đặt lại" style="width:24px; height:24px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        </button>
+      </div>
+      <textarea class="system-prompt-box" id="systemPromptBox" placeholder="Instruct cho AI... (VD: Bạn là trợ lý lập trình chuyên nghiệp)"></textarea>
+      <div class="template-chips" id="templateChips">
+        <span class="template-chip" data-template="coder">👨‍💻 Lập trình</span>
+        <span class="template-chip" data-template="tutor">🎓 Gia sư</span>
+        <span class="template-chip" data-template="translator">🌐 Dịch giả</span>
+        <span class="template-chip" data-template="writer">✍️ Biên tập</span>
+        <span class="template-chip" data-template="analyst">📊 Phân tích</span>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">Tham số</div>
+      <div class="param-row">
+        <div class="param-label">
+          <span>Temperature</span>
+          <span class="param-value" id="tempValue">0.7</span>
+        </div>
+        <input type="range" class="slider" id="tempSlider" min="0" max="2" step="0.05" value="0.7">
+        <p class="param-hint">Độ ngẫu nhiên của câu trả lời. <b>0</b> = chính xác, lặp lại; <b>0.7</b> = cân bằng (mặc định); <b>1.5+</b> = sáng tạo, đa dạng.</p>
+      </div>
+      <div class="param-row">
+        <div class="param-label">
+          <span>Max tokens</span>
+          <span class="param-value" id="maxTokensValue">4096</span>
+        </div>
+        <input type="range" class="slider" id="maxTokensSlider" min="256" max="16384" step="128" value="4096">
+        <p class="param-hint">Độ dài tối đa câu trả lời. Cao hơn = AI có thể trả lời dài hơn nhưng tốn nhiều credit hơn. <b>4096</b> ~ 3000 từ.</p>
+      </div>
+      <div class="param-row">
+        <div class="param-label">
+          <span>Top-p</span>
+          <span class="param-value" id="topPValue">1.0</span>
+        </div>
+        <input type="range" class="slider" id="topPSlider" min="0" max="1" step="0.05" value="1">
+        <p class="param-hint">Đa dạng từ vựng. <b>1.0</b> = dùng tất cả từ có thể; thấp hơn = chỉ dùng từ phổ biến nhất. Để mặc định nếu không rõ.</p>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">Context</div>
+      <div class="param-row">
+        <div class="param-label">
+          <span id="contextLabel">0 / 128k tokens</span>
+          <span class="param-value" id="contextPct">0%</span>
+        </div>
+        <div class="context-bar"><div class="context-bar-fill" id="contextBarFill" style="width:0%;"></div></div>
+        <p style="font-size:11.5px; color:var(--text-3); margin-top:6px;">Ước tính — số thực tế phụ thuộc tokenizer model.</p>
+      </div>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">
+        Thống kê phiên
+        <button class="icon-btn" id="resetStatsBtn" title="Đặt lại thống kê" style="width:24px; height:24px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        </button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Input tokens</div>
+          <div class="stat-value" id="statInputTokens">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Output tokens</div>
+          <div class="stat-value" id="statOutputTokens">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Tin nhắn</div>
+          <div class="stat-value" id="statMessages">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Chi phí (x)</div>
+          <div class="stat-value" id="statCost">0.00</div>
+        </div>
+      </div>
+      <p style="font-size:11.5px; color:var(--text-3); margin-top:10px; line-height:1.5;">
+        Thống kê tích lũy theo API key, được lưu lại giữa các lần mở. Đổi key sẽ chuyển sang thống kê của key mới.
+      </p>
+    </div>
+
+    <div class="panel-section">
+      <div class="panel-section-title">Xuất dữ liệu</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+        <button class="btn btn-ghost" id="exportMdBtn" style="border:1px solid var(--border); justify-content:center;">📝 Markdown</button>
+        <button class="btn btn-ghost" id="exportJsonBtn" style="border:1px solid var(--border); justify-content:center;">📦 JSON</button>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-backdrop" id="settingsModal">
+  <div class="modal large">
+    <div class="modal-header">
+      <div class="modal-title">Cài đặt</div>
+      <button class="icon-btn" data-close-modal>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label class="field-label">API Key <span style="color:var(--danger);">*</span></label>
+        <div class="input-with-action">
+          <input type="password" class="input-field mono" id="apiKeyInput" placeholder="sk-hapuppy-...">
+          <button class="input-action-btn" id="toggleKeyVisibility">Hiện</button>
+        </div>
+        <p class="field-hint">Key được lưu trong trình duyệt này (localStorage). Đừng dùng trên máy công cộng. Tạo key tại <a href="https://hapuppy.com/register?invite=oVWkzRJZ" target="_blank">dashboard Hapuppy</a>.</p>
+      </div>
+      <div class="field">
+        <label class="field-label">Base URL</label>
+        <input type="text" class="input-field mono" id="baseUrlInput" value="https://beta.hapuppy.com/v1">
+        <p class="field-hint">Default: <code>https://beta.hapuppy.com/v1</code> (OpenAI-compatible). Đừng bỏ <code>/v1</code>.</p>
+      </div>
+      <div class="field">
+        <button class="btn btn-primary" id="testConnBtn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Test kết nối
+        </button>
+        <button class="btn btn-ghost" id="refreshModelsBtn" style="margin-left:8px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Làm mới list model từ API
+        </button>
+        <p class="field-hint" id="testConnResult"></p>
+      </div>
+      <div class="divider"></div>
+      <div class="field">
+        <label class="field-label">Quản lý dữ liệu</label>
+        <button class="btn btn-ghost" style="border:1px solid var(--border);" id="exportAllBtn">📦 Xuất tất cả cuộc trò chuyện</button>
+        <button class="btn btn-ghost" style="border:1px solid var(--border); margin-left:8px;" id="importBtn">📥 Nhập từ JSON</button>
+        <button class="btn btn-danger" style="margin-left:8px;" id="clearAllBtn">🗑 Xóa tất cả</button>
+        <input type="file" id="importFile" accept=".json" style="display:none;">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" data-close-modal>Hủy</button>
+      <button class="btn btn-primary" id="saveSettingsBtn">Lưu cài đặt</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODEL PICKER MODAL -->
+<div class="modal-backdrop" id="modelModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Chọn model</div>
+      <button class="icon-btn" data-close-modal>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="model-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="modelSearchInput" placeholder="Tìm model (VD: gpt-5, claude, gemini...)" autocomplete="off">
+      </div>
+      <div class="model-actions-bar">
+        <span style="color: var(--text-2);">Trạng thái:</span>
+        <span style="display:inline-flex; align-items:center; gap:5px;"><span class="model-status-dot available"></span>Khả dụng</span>
+        <span style="display:inline-flex; align-items:center; gap:5px;"><span class="model-status-dot unavailable"></span>Không dùng được</span>
+        <span style="display:inline-flex; align-items:center; gap:5px;"><span class="model-status-dot unknown"></span>Chưa kiểm tra</span>
+        <div style="margin-left: auto; display: flex; gap: 6px;">
+          <button class="btn btn-ghost" id="checkVisibleBtn" style="border:1px solid var(--border);" title="Kiểm tra các model đang hiển thị">Kiểm tra hiển thị</button>
+          <button class="btn btn-primary" id="checkAllBtn" title="Kiểm tra TẤT CẢ model (tốn nhiều request)">Kiểm tra tất cả</button>
+        </div>
+      </div>
+      <p id="checkProgress" style="font-size: 12px; color: var(--text-3); margin-bottom: 10px; display: none;"></p>
+      <div class="model-groups" id="modelGroups"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FIRST TIME SETUP MODAL -->
+<div class="modal-backdrop" id="setupModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Bắt đầu với Hapuppy Chat</div>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom:16px; color:var(--text-2); font-size:14px; line-height:1.6;">
+        Nhập API key Hapuppy của bạn để bắt đầu. Key sẽ được lưu trong trình duyệt này, không gửi đi đâu khác ngoài máy chủ Hapuppy.
+      </p>
+      <div class="field">
+        <label class="field-label">API Key</label>
+        <div class="input-with-action">
+          <input type="password" class="input-field mono" id="setupApiKey" placeholder="sk-hapuppy-...">
+          <button class="input-action-btn" id="setupToggleKey">Hiện</button>
+        </div>
+        <p class="field-hint">Chưa có? Tạo tại <a href="https://hapuppy.com/zh/dashboard/keys" target="_blank">hapuppy.com/dashboard/keys</a>.</p>
+      </div>
+      <div class="field">
+        <label class="field-label">Base URL</label>
+        <input type="text" class="input-field mono" id="setupBaseUrl" value="https://beta.hapuppy.com/v1">
+      </div>
+      <p id="setupError" style="color:var(--danger); font-size:13px; margin-top:8px;"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" id="setupSaveBtn">Lưu & bắt đầu</button>
+    </div>
+  </div>
+</div>
+
+<!-- Image Lightbox -->
+<div class="lightbox" id="lightbox"><img id="lightboxImg" alt=""></div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Hidden file input -->
+<input type="file" id="fileInputImage" accept="image/*" style="display:none;" multiple>
+<input type="file" id="fileInputDoc" accept=".txt,.md,.json,.csv,.py,.js,.ts,.html,.css,.java,.cpp,.c,.go,.rs,.rb,.php,.sql,.yaml,.yml,.xml,.sh,.pdf" style="display:none;" multiple>
+
+
+<script>
+'use strict';
+
+/* ================================================
+   CONSTANTS & MODEL DATA
+   Pricing multipliers from Hapuppy dashboard
+   ================================================ */
+const DEFAULT_BASE_URL = 'https://beta.hapuppy.com/v1';
+
+// Pricing as inp/out multipliers (relative to Hapuppy's base rate)
+// null = not shown in user's list
+const MODEL_DATA = [
+  // REASONING — tư duy sâu
+  { id: 'o3', group: 'reasoning', inp: 0.4, out: 1.6, tier: 'top', ctx: 200000 },
+  { id: 'o1', group: 'reasoning', inp: 3, out: 12, tier: 'top', ctx: 200000 },
+  { id: 'o4-mini', group: 'reasoning', inp: 0.22, out: 0.88, tier: 'high', ctx: 128000 },
+  { id: 'o3-mini', group: 'reasoning', inp: 0.22, out: 0.88, tier: 'high', ctx: 128000 },
+  { id: 'deepseek-r1', group: 'reasoning', inp: 0.2, out: 1, tier: 'high', ctx: 64000 },
+  { id: 'deepseek-r1t2-chimera', group: 'reasoning', inp: 0.25, out: 0.5, tier: 'high', ctx: 64000 },
+  { id: 'deepseek-r1t-chimera', group: 'reasoning', inp: 0.25, out: 0.5, tier: 'mid', ctx: 64000 },
+  { id: 'gemini-3.1-pro-preview', group: 'reasoning', inp: 0.25, out: 2, tier: 'top', ctx: 1000000 },
+  { id: 'gemini-3-pro-preview', group: 'reasoning', inp: null, out: null, tier: 'top', ctx: 1000000 },
+  { id: 'magistral-medium-latest', group: 'reasoning', inp: null, out: null, tier: 'high', ctx: 128000 },
+  { id: 'magistral-small-latest', group: 'reasoning', inp: null, out: null, tier: 'mid', ctx: 128000 },
+  { id: 'qwq-32b', group: 'reasoning', inp: 0.05, out: 0.5, tier: 'mid', ctx: 32000 },
+
+  // FLAGSHIP — thông minh nhất
+  { id: 'gpt-5.4', group: 'flagship', inp: 0.8, out: 2, tier: 'top', ctx: 400000 },
+  { id: 'gpt-5.3-chat-latest', group: 'flagship', inp: 0.4, out: 1.6, tier: 'top', ctx: 400000 },
+  { id: 'gpt-5.2', group: 'flagship', inp: 0.4, out: 1.6, tier: 'top', ctx: 400000 },
+  { id: 'gpt-5.2-chat-latest', group: 'flagship', inp: 0.4, out: 1.6, tier: 'top', ctx: 400000 },
+  { id: 'gpt-5.1', group: 'flagship', inp: 0.4, out: 1.6, tier: 'high', ctx: 400000 },
+  { id: 'gpt-5', group: 'flagship', inp: 0.4, out: 1.6, tier: 'high', ctx: 400000 },
+  { id: 'gpt-5-chat-latest', group: 'flagship', inp: null, out: null, tier: 'high', ctx: 400000 },
+  { id: 'claude-haiku-4-5-20251001', group: 'flagship', inp: 0.2, out: 1, tier: 'high', ctx: 200000 },
+  { id: 'claude-3-5-haiku-20241022', group: 'flagship', inp: 1, out: 3, tier: 'mid', ctx: 200000 },
+  { id: 'gemini-2.5-pro', group: 'flagship', inp: 0.25, out: 2, tier: 'top', ctx: 1000000 },
+  { id: 'glm-5.1', group: 'flagship', inp: 0.5, out: 0.7, tier: 'high', ctx: 128000 },
+  { id: 'glm-5', group: 'flagship', inp: 0.5, out: 0.7, tier: 'high', ctx: 128000 },
+  { id: 'deepseek-v3.2', group: 'flagship', inp: 0.3, out: 0.6, tier: 'high', ctx: 64000 },
+  { id: 'kimi-k2.5', group: 'flagship', inp: 0.12, out: 0.6, tier: 'high', ctx: 128000 },
+  { id: 'gpt-4.1', group: 'flagship', inp: 0.4, out: 1.6, tier: 'mid', ctx: 1000000 },
+
+  // CHAT — cân bằng, nói chuyện
+  { id: 'gpt-4o', group: 'chat', inp: 0.5, out: 2, tier: 'high', ctx: 128000 },
+  { id: 'gemini-2.5-flash', group: 'chat', inp: 0.03, out: 0.12, tier: 'mid', ctx: 1000000 },
+  { id: 'gemini-3-flash-preview', group: 'chat', inp: 0.03, out: 0.12, tier: 'high', ctx: 1000000 },
+  { id: 'glm-4.7', group: 'chat', inp: 0.35, out: 0.5, tier: 'high', ctx: 128000 },
+  { id: 'glm-4.6', group: 'chat', inp: 0.35, out: 0.5, tier: 'high', ctx: 128000 },
+  { id: 'glm-4.5', group: 'chat', inp: null, out: null, tier: 'mid', ctx: 128000 },
+  { id: 'deepseek-v3.1-terminus', group: 'chat', inp: 0.3, out: 0.6, tier: 'high', ctx: 64000 },
+  { id: 'deepseek-v3.1-nex-n1', group: 'chat', inp: 0.3, out: 0.6, tier: 'high', ctx: 64000 },
+  { id: 'deepseek-v3.1', group: 'chat', inp: 0.2, out: 0.4, tier: 'mid', ctx: 64000 },
+  { id: 'deepseek-v3', group: 'chat', inp: 0.25, out: 0.5, tier: 'mid', ctx: 64000 },
+  { id: 'kimi-k2-instruct', group: 'chat', inp: 0.12, out: 0.5, tier: 'mid', ctx: 128000 },
+  { id: 'mistral-large-latest', group: 'chat', inp: null, out: null, tier: 'mid', ctx: 128000 },
+  { id: 'mistral-medium-latest', group: 'chat', inp: null, out: null, tier: 'mid', ctx: 128000 },
+  { id: 'mistral-small-latest', group: 'chat', inp: null, out: null, tier: 'low', ctx: 32000 },
+
+  // FAST — nhanh & rẻ
+  { id: 'gpt-5-mini', group: 'fast', inp: 0.03, out: 0.12, tier: 'high', ctx: 400000 },
+  { id: 'gpt-5.4-mini', group: 'fast', inp: 0.09, out: 0.3, tier: 'high', ctx: 400000 },
+  { id: 'gpt-4.1-mini', group: 'fast', inp: 0.03, out: 0.12, tier: 'high', ctx: 1000000 },
+  { id: 'gpt-4o-mini', group: 'fast', inp: 0.03, out: 0.12, tier: 'mid', ctx: 128000 },
+  { id: 'gpt-5-nano', group: 'fast', inp: 0.02, out: 0.08, tier: 'mid', ctx: 400000 },
+  { id: 'gpt-5.4-nano', group: 'fast', inp: 0.08, out: 0.25, tier: 'mid', ctx: 400000 },
+  { id: 'gpt-4.1-nano', group: 'fast', inp: 0.02, out: 0.08, tier: 'low', ctx: 1000000 },
+  { id: 'gemini-2.0-flash', group: 'fast', inp: 0.03, out: 0.12, tier: 'mid', ctx: 1000000 },
+  { id: 'gemini-3.1-flash-lite-preview', group: 'fast', inp: 0.02, out: 0.07, tier: 'mid', ctx: 1000000 },
+  { id: 'gemini-2.5-flash-lite-preview-06-17', group: 'fast', inp: 0.01, out: 0.06, tier: 'low', ctx: 1000000 },
+  { id: 'glm-4.5-air', group: 'fast', inp: 0.35, out: 0.5, tier: 'mid', ctx: 128000 },
+  { id: 'mimo-v2-flash', group: 'fast', inp: 0.02, out: 0.1, tier: 'low', ctx: 32000 },
+  { id: 'umbra', group: 'fast', inp: 0.02, out: 0.1, tier: 'low', ctx: 32000 },
+  { id: 'llama-4-maverick-17b-128e-instruct', group: 'fast', inp: 0.02, out: 0.08, tier: 'mid', ctx: 128000 },
+  { id: 'llama-4-scout-17b-16e-instruct', group: 'fast', inp: 0.02, out: 0.08, tier: 'low', ctx: 32000 },
+  { id: 'gpt-oss-120b', group: 'fast', inp: 0.04, out: 0.16, tier: 'mid', ctx: 32000 },
+  { id: 'gpt-oss-20b', group: 'fast', inp: 0.02, out: 0.08, tier: 'low', ctx: 32000 },
+  { id: 'ministral-8b-latest', group: 'fast', inp: null, out: null, tier: 'low', ctx: 32000 },
+  { id: 'ministral-3b-latest', group: 'fast', inp: null, out: null, tier: 'low', ctx: 32000 },
+  { id: 'gemma-3n-e4b-it', group: 'fast', inp: null, out: null, tier: 'low', ctx: 8000 },
+
+  // CODING — chuyên code
+  { id: 'gpt-5.3-codex', group: 'coding', inp: 0.6, out: 2, tier: 'top', ctx: 400000 },
+  { id: 'gpt-5.2-codex', group: 'coding', inp: 0.6, out: 2, tier: 'top', ctx: 400000 },
+  { id: 'gpt-5.1-codex', group: 'coding', inp: 0.4, out: 1.6, tier: 'high', ctx: 400000 },
+  { id: 'gpt-5-codex', group: 'coding', inp: 0.4, out: 1.6, tier: 'high', ctx: 400000 },
+  { id: 'gpt-5.1-codex-mini', group: 'coding', inp: 0.03, out: 0.12, tier: 'mid', ctx: 400000 },
+  { id: 'qwen3-coder-480b-a35b-instruct', group: 'coding', inp: 0.05, out: 0.5, tier: 'high', ctx: 128000 },
+  { id: 'qwen3-235b-a22b-instruct', group: 'coding', inp: 0.05, out: 0.5, tier: 'mid', ctx: 128000 },
+
+  // IMAGE
+  { id: 'gpt-image-1.5', group: 'image', inp: 1, out: 1, tier: 'top', ctx: null },
+  { id: 'gpt-image-1', group: 'image', inp: 1, out: 1, tier: 'high', ctx: null },
+  { id: 'flux-kontext-max', group: 'image', inp: 1, out: 1, tier: 'top', ctx: null },
+  { id: 'flux-kontext-pro', group: 'image', inp: 1, out: 1, tier: 'high', ctx: null },
+  { id: 'midjourney', group: 'image', inp: 1, out: 1, tier: 'top', ctx: null },
+  { id: 'imagen-4.0-generate-preview-06-06', group: 'image', inp: 1, out: 1, tier: 'high', ctx: null },
+  { id: 'imagen-3.0-generate-002', group: 'image', inp: 1, out: 1, tier: 'mid', ctx: null },
+  { id: 'recraft-v3', group: 'image', inp: 1, out: 1, tier: 'mid', ctx: null },
+  { id: 'gemini-3.1-flash-image-preview', group: 'image', inp: 0.03, out: 0.12, tier: 'high', ctx: null },
+  { id: 'gemini-3-pro-image-preview', group: 'image', inp: 0.25, out: 2, tier: 'top', ctx: null },
+  { id: 'gemini-2.5-flash-image', group: 'image', inp: 0.03, out: 0.12, tier: 'mid', ctx: null },
+
+  // VOICE
+  { id: 'gpt-4o-mini-tts', group: 'voice', inp: 1, out: 1, tier: 'high', ctx: null, subtype: 'tts' },
+  { id: 'tts-1-hd', group: 'voice', inp: 1, out: 1, tier: 'high', ctx: null, subtype: 'tts' },
+  { id: 'tts-1', group: 'voice', inp: 1, out: 1, tier: 'mid', ctx: null, subtype: 'tts' },
+  { id: 'gpt-4o-transcribe', group: 'voice', inp: 1, out: 1, tier: 'high', ctx: null, subtype: 'stt' },
+  { id: 'gpt-4o-mini-transcribe', group: 'voice', inp: 1, out: 1, tier: 'mid', ctx: null, subtype: 'stt' },
+  { id: 'whisper-1', group: 'voice', inp: 1, out: 1, tier: 'mid', ctx: null, subtype: 'stt' },
+
+  // SEARCH
+  { id: 'gpt-4o-search-preview', group: 'search', inp: 0.5, out: 2, tier: 'high', ctx: 128000 },
+  { id: 'gpt-4o-mini-search-preview', group: 'search', inp: 0.03, out: 0.12, tier: 'mid', ctx: 128000 },
+  { id: 'r1-1776', group: 'search', inp: null, out: null, tier: 'mid', ctx: 128000 },
+
+  // UTILITY
+  { id: 'text-embedding-3-large', group: 'utility', inp: 1, out: 1, tier: 'high', ctx: null, subtype: 'embedding' },
+  { id: 'text-embedding-3-small', group: 'utility', inp: 1, out: 1, tier: 'mid', ctx: null, subtype: 'embedding' },
+  { id: 'omni-moderation-latest', group: 'utility', inp: 1, out: 1, tier: 'mid', ctx: null, subtype: 'moderation' },
+  { id: 'mistral-moderation-latest', group: 'utility', inp: null, out: null, tier: 'low', ctx: null, subtype: 'moderation' },
+];
+
+const GROUP_META = {
+  reasoning:  { icon: '🧠', label: 'Reasoning',   desc: 'Tư duy sâu, logic, toán' },
+  flagship:   { icon: '⚡',  label: 'Flagship',    desc: 'Thông minh nhất' },
+  chat:       { icon: '💬', label: 'Chat',        desc: 'Cân bằng, nói chuyện' },
+  fast:       { icon: '🚀', label: 'Fast',        desc: 'Nhanh & rẻ' },
+  coding:     { icon: '💻', label: 'Coding',      desc: 'Chuyên code' },
+  image:      { icon: '🎨', label: 'Image',       desc: 'Tạo ảnh' },
+  voice:      { icon: '🔊', label: 'Voice',       desc: 'TTS/STT' },
+  search:     { icon: '🔍', label: 'Search',      desc: 'Có web search' },
+  utility:    { icon: '🛠️', label: 'Utility',     desc: 'Embedding, moderation' },
+};
+
+const TIER_BADGE = {
+  top:  { label: 'Top',  cls: 'badge-top' },
+  high: { label: 'High', cls: 'badge-high' },
+  mid:  { label: 'Mid',  cls: 'badge-mid' },
+  low:  { label: 'Low',  cls: 'badge-low' },
+};
+
+const SYSTEM_TEMPLATES = {
+  coder: 'Bạn là một kỹ sư phần mềm senior, giỏi mọi ngôn ngữ lập trình và hệ thống. Trả lời ngắn gọn, đưa code chạy được, giải thích lý do. Ưu tiên practice tốt, an toàn, hiệu năng.',
+  tutor: 'Bạn là gia sư tận tâm. Giải thích khái niệm từ cơ bản đến nâng cao, dùng ví dụ trực quan, đặt câu hỏi kiểm tra hiểu biết. Khuyến khích người học.',
+  translator: 'Bạn là dịch giả chuyên nghiệp, thành thạo Việt-Anh-Trung-Nhật. Giữ nguyên ý nghĩa, dùng từ ngữ tự nhiên phù hợp văn hoá đích. Nếu có thành ngữ, giải thích nghĩa.',
+  writer: 'Bạn là biên tập viên kỳ cựu. Giúp viết rõ ràng, súc tích, đúng ngữ pháp, phù hợp đối tượng đọc. Đề xuất cải thiện cấu trúc và từ ngữ.',
+  analyst: 'Bạn là nhà phân tích dữ liệu. Phân tích khách quan dựa trên dữ kiện, đưa ra insight có cơ sở, trình bày dưới dạng bảng/số liệu khi phù hợp. Nêu rõ giả định và hạn chế.',
+};
+
+/* ================================================
+   STATE
+   ================================================ */
+const state = {
+  apiKey: '',
+  baseUrl: DEFAULT_BASE_URL,
+  theme: 'dark',
+  currentChatId: null,
+  chats: {},        // id -> {id, title, messages, model, createdAt, updatedAt}
+  currentModel: 'gpt-4o-mini',
+  temperature: 0.7,
+  maxTokens: 4096,
+  topP: 1.0,
+  systemPrompt: '',
+  sessionTokens: { input: 0, output: 0 },
+  sessionCost: 0,
+  sessionMessages: 0,
+  attachments: [],  // [{type:'image'|'file', name, size, dataUrl, text?}]
+  isGenerating: false,
+  abortController: null,
+  availableModels: [], // fetched from /v1/models, fallback to MODEL_DATA
+  modelStatus: {},  // { modelId: { status: 'available'|'unavailable'|'checking'|'unknown', error?: string, checkedAt?: number } }
+};
+
+// Hash function for API key (used to namespace stats per key without storing the key)
+function hashKey(key) {
+  if (!key) return 'anon';
+  let h = 0;
+  for (let i = 0; i < key.length; i++) {
+    h = ((h << 5) - h) + key.charCodeAt(i);
+    h |= 0;
+  }
+  return 'k' + Math.abs(h).toString(36);
+}
+
+function statsStorageKey() {
+  return 'hapuppy-stats-' + hashKey(state.apiKey);
+}
+function modelStatusStorageKey() {
+  return 'hapuppy-model-status-' + hashKey(state.apiKey);
+}
+
+function loadStatsForCurrentKey() {
+  try {
+    const raw = localStorage.getItem(statsStorageKey());
+    if (raw) {
+      const s = JSON.parse(raw);
+      state.sessionTokens = s.sessionTokens || { input: 0, output: 0 };
+      state.sessionCost = s.sessionCost || 0;
+      state.sessionMessages = s.sessionMessages || 0;
+    } else {
+      state.sessionTokens = { input: 0, output: 0 };
+      state.sessionCost = 0;
+      state.sessionMessages = 0;
+    }
+  } catch (e) {
+    state.sessionTokens = { input: 0, output: 0 };
+    state.sessionCost = 0;
+    state.sessionMessages = 0;
+  }
+}
+
+function saveStats() {
+  try {
+    localStorage.setItem(statsStorageKey(), JSON.stringify({
+      sessionTokens: state.sessionTokens,
+      sessionCost: state.sessionCost,
+      sessionMessages: state.sessionMessages,
+      updatedAt: Date.now(),
+    }));
+  } catch (e) {}
+}
+
+function loadModelStatus() {
+  try {
+    const raw = localStorage.getItem(modelStatusStorageKey());
+    if (raw) {
+      const s = JSON.parse(raw);
+      // Expire results older than 6 hours
+      const now = Date.now();
+      const valid = {};
+      Object.keys(s).forEach(k => {
+        if (s[k] && s[k].checkedAt && (now - s[k].checkedAt) < 6 * 3600 * 1000) {
+          valid[k] = s[k];
+        }
+      });
+      state.modelStatus = valid;
+    } else {
+      state.modelStatus = {};
+    }
+  } catch (e) {
+    state.modelStatus = {};
+  }
+}
+
+function saveModelStatus() {
+  try {
+    localStorage.setItem(modelStatusStorageKey(), JSON.stringify(state.modelStatus));
+  } catch (e) {}
+}
+
+function resetStats() {
+  state.sessionTokens = { input: 0, output: 0 };
+  state.sessionCost = 0;
+  state.sessionMessages = 0;
+  saveStats();
+  updateStats();
+}
+
+/* ================================================
+   STORAGE (IndexedDB)
+   ================================================ */
+const DB_NAME = 'hapuppy-chat';
+const DB_VER = 1;
+let db = null;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = (e) => {
+      const database = e.target.result;
+      if (!database.objectStoreNames.contains('chats')) {
+        const store = database.createObjectStore('chats', { keyPath: 'id' });
+        store.createIndex('updatedAt', 'updatedAt');
+      }
+    };
+    req.onsuccess = (e) => { db = e.target.result; resolve(db); };
+    req.onerror = (e) => reject(e.target.error);
+  });
+}
+function idbPut(chat) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('chats', 'readwrite');
+    tx.objectStore('chats').put(chat);
+    tx.oncomplete = () => resolve();
+    tx.onerror = (e) => reject(e.target.error);
+  });
+}
+function idbDelete(id) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('chats', 'readwrite');
+    tx.objectStore('chats').delete(id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = (e) => reject(e.target.error);
+  });
+}
+function idbGetAll() {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('chats', 'readonly');
+    const req = tx.objectStore('chats').getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = (e) => reject(e.target.error);
+  });
+}
+function idbClear() {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('chats', 'readwrite');
+    tx.objectStore('chats').clear();
+    tx.oncomplete = () => resolve();
+    tx.onerror = (e) => reject(e.target.error);
+  });
+}
+
+/* ================================================
+   UTILITY
+   ================================================ */
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+
+function uid() { return 'c_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+
+function estimateTokens(text) {
+  // Rough heuristic: ~4 chars per token for English, ~3 for CJK, ~3.5 for Vietnamese with diacritics
+  if (!text) return 0;
+  const nonAscii = (text.match(/[^\x00-\x7F]/g) || []).length;
+  const ascii = text.length - nonAscii;
+  return Math.ceil(ascii / 4 + nonAscii / 2.2);
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + 'B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + 'KB';
+  return (bytes / 1048576).toFixed(1) + 'MB';
+}
+
+function formatNumber(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+  return String(n);
+}
+
+function timeAgoGroup(ts) {
+  const now = Date.now();
+  const diff = now - ts;
+  const today = new Date(now).setHours(0,0,0,0);
+  const yesterday = today - 86400000;
+  const weekAgo = today - 7 * 86400000;
+  const mAgo = today - 30 * 86400000;
+  if (ts >= today) return 'Hôm nay';
+  if (ts >= yesterday) return 'Hôm qua';
+  if (ts >= weekAgo) return '7 ngày qua';
+  if (ts >= mAgo) return '30 ngày qua';
+  return 'Cũ hơn';
+}
+
+function escapeHtml(s) {
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+function toast(msg, type = 'info', duration = 3500) {
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  const icons = { success: '✓', error: '✕', warn: '⚠', info: 'ⓘ' };
+  el.innerHTML = `<span style="color: var(--${type === 'success' ? 'success' : type === 'error' ? 'danger' : type === 'warn' ? 'warn' : 'accent'}); font-weight: 600;">${icons[type] || 'ⓘ'}</span><span>${escapeHtml(msg)}</span>`;
+  $('#toastContainer').appendChild(el);
+  setTimeout(() => {
+    el.style.transition = 'all .3s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(20px)';
+    setTimeout(() => el.remove(), 300);
+  }, duration);
+}
+
+/* ================================================
+   MARKDOWN RENDERING
+   ================================================ */
+// Configure marked - DO NOT use deprecated 'highlight' option (causes errors in marked v12+)
+// We handle highlighting in the custom renderer below.
+marked.setOptions({
+  gfm: true,
+  breaks: true,
+});
+
+// Safe wrapper for hljs that won't crash if hljs hasn't loaded yet
+function safeHighlight(code, lang) {
+  if (typeof hljs === 'undefined') return escapeHtml(code);
+  try {
+    if (lang && hljs.getLanguage && hljs.getLanguage(lang)) {
+      return hljs.highlight(code, { language: lang, ignoreIllegals: true }).value;
+    }
+    return hljs.highlightAuto(code).value;
+  } catch (e) {
+    return escapeHtml(code);
+  }
+}
+
+// Custom renderer to wrap code with copy button and header
+const renderer = new marked.Renderer();
+renderer.code = function(code, lang) {
+  const language = (lang || '').toLowerCase();
+  const highlighted = safeHighlight(code, language);
+  const b64 = btoa(unescape(encodeURIComponent(code)));
+  return `<pre><div class="code-header"><span>${language || 'text'}</span><button class="copy-code-btn" onclick="copyCodeFromB64('${b64}', this)">Sao chép</button></div><code class="hljs language-${language}">${highlighted}</code></pre>`;
+};
+marked.use({ renderer });
+
+function copyCodeFromB64(b64, btn) {
+  try {
+    const text = decodeURIComponent(escape(atob(b64)));
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Đã chép ✓';
+      setTimeout(() => { btn.textContent = 'Sao chép'; }, 1500);
+    });
+  } catch (e) { toast('Không sao chép được', 'error'); }
+}
+window.copyCodeFromB64 = copyCodeFromB64;
+
+function renderMarkdown(md) {
+  const html = marked.parse(md || '');
+  return DOMPurify.sanitize(html, { ADD_ATTR: ['onclick', 'target'] });
+}
+
+function renderMathIn(el) {
+  try {
+    if (typeof renderMathInElement === 'function') {
+      renderMathInElement(el, {
+        delimiters: [
+          { left: '$$', right: '$$', display: true },
+          { left: '$', right: '$', display: false },
+          { left: '\\[', right: '\\]', display: true },
+          { left: '\\(', right: '\\)', display: false },
+        ],
+        throwOnError: false,
+      });
+    }
+  } catch (e) {}
+}
+
+/* ================================================
+   CHAT MANAGEMENT
+   ================================================ */
+function createNewChat() {
+  const chat = {
+    id: uid(),
+    title: 'Cuộc trò chuyện mới',
+    messages: [],
+    model: state.currentModel,
+    systemPrompt: state.systemPrompt,
+    temperature: state.temperature,
+    maxTokens: state.maxTokens,
+    topP: state.topP,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+  };
+  state.chats[chat.id] = chat;
+  state.currentChatId = chat.id;
+  idbPut(chat);
+  renderChatList();
+  renderMessages();
+  toggleWelcome(true);
+  $('#inputBox').focus();
+}
+
+function loadChat(id) {
+  const chat = state.chats[id];
+  if (!chat) return;
+  state.currentChatId = id;
+  if (chat.model) state.currentModel = chat.model;
+  if (chat.systemPrompt !== undefined) state.systemPrompt = chat.systemPrompt;
+  if (chat.temperature !== undefined) state.temperature = chat.temperature;
+  if (chat.maxTokens !== undefined) state.maxTokens = chat.maxTokens;
+  if (chat.topP !== undefined) state.topP = chat.topP;
+  updateModelUI();
+  $('#systemPromptBox').value = state.systemPrompt;
+  $('#tempSlider').value = state.temperature;
+  $('#tempValue').textContent = state.temperature.toFixed(2);
+  $('#maxTokensSlider').value = state.maxTokens;
+  $('#maxTokensValue').textContent = state.maxTokens;
+  $('#topPSlider').value = state.topP;
+  $('#topPValue').textContent = state.topP.toFixed(2);
+  renderChatList();
+  renderMessages();
+  toggleWelcome(chat.messages.length === 0);
+}
+
+async function saveCurrentChat() {
+  const chat = state.chats[state.currentChatId];
+  if (!chat) return;
+  chat.updatedAt = Date.now();
+  chat.model = state.currentModel;
+  chat.systemPrompt = state.systemPrompt;
+  chat.temperature = state.temperature;
+  chat.maxTokens = state.maxTokens;
+  chat.topP = state.topP;
+  await idbPut(chat);
+}
+
+async function deleteChat(id) {
+  if (!confirm('Xóa cuộc trò chuyện này?')) return;
+  delete state.chats[id];
+  await idbDelete(id);
+  if (state.currentChatId === id) {
+    const remaining = Object.values(state.chats).sort((a,b) => b.updatedAt - a.updatedAt);
+    if (remaining.length > 0) loadChat(remaining[0].id);
+    else createNewChat();
+  } else {
+    renderChatList();
+  }
+  toast('Đã xóa', 'success');
+}
+
+async function renameChat(id) {
+  const chat = state.chats[id];
+  if (!chat) return;
+  const newTitle = prompt('Tên mới:', chat.title);
+  if (newTitle && newTitle.trim()) {
+    chat.title = newTitle.trim();
+    await saveCurrentChat();
+    renderChatList();
+  }
+}
+
+function renderChatList() {
+  const container = $('#chatList');
+  container.innerHTML = '';
+  const search = $('#chatSearch').value.toLowerCase().trim();
+  let chats = Object.values(state.chats).sort((a,b) => b.updatedAt - a.updatedAt);
+  if (search) {
+    chats = chats.filter(c => c.title.toLowerCase().includes(search) ||
+      c.messages.some(m => typeof m.content === 'string' && m.content.toLowerCase().includes(search)));
+  }
+  if (chats.length === 0) {
+    container.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-3); font-size: 13px;">' + (search ? 'Không tìm thấy.' : 'Chưa có cuộc trò chuyện nào.') + '</div>';
+    return;
+  }
+  let currentGroup = '';
+  chats.forEach(chat => {
+    const group = timeAgoGroup(chat.updatedAt);
+    if (group !== currentGroup) {
+      currentGroup = group;
+      const label = document.createElement('div');
+      label.className = 'chat-group-label';
+      label.textContent = group;
+      container.appendChild(label);
+    }
+    const item = document.createElement('div');
+    item.className = 'chat-item' + (chat.id === state.currentChatId ? ' active' : '');
+    item.innerHTML = `
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span class="chat-item-title">${escapeHtml(chat.title)}</span>
+      <div class="chat-item-actions">
+        <button class="rename-btn" title="Đổi tên">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="delete-btn" title="Xóa">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+      </div>
+    `;
+    item.addEventListener('click', (e) => {
+      if (e.target.closest('.rename-btn')) { renameChat(chat.id); return; }
+      if (e.target.closest('.delete-btn')) { deleteChat(chat.id); return; }
+      loadChat(chat.id);
+    });
+    container.appendChild(item);
+  });
+}
+
+/* ================================================
+   MESSAGES RENDERING
+   ================================================ */
+function toggleWelcome(show) {
+  $('#welcomeScreen').style.display = show ? 'flex' : 'none';
+  $('#messages').style.display = show ? 'none' : 'flex';
+}
+
+function renderMessages() {
+  const container = $('#messages');
+  container.innerHTML = '';
+  const chat = state.chats[state.currentChatId];
+  if (!chat) return;
+  chat.messages.forEach((msg, idx) => {
+    container.appendChild(buildMessageEl(msg, idx));
+  });
+  updateStats();
+  scrollToBottom();
+}
+
+function buildMessageEl(msg, idx) {
+  const el = document.createElement('div');
+  el.className = 'message ' + msg.role;
+  el.dataset.idx = idx;
+
+  const avatarLetter = msg.role === 'user' ? 'B' : msg.role === 'assistant' ? '✨' : '⚙';
+  let imagesHtml = '';
+  let filesHtml = '';
+  let contentHtml = '';
+
+  if (msg.role === 'user') {
+    if (msg.images && msg.images.length) {
+      imagesHtml = `<div class="message-images">${msg.images.map(im =>
+        `<img src="${im}" class="message-image" onclick="openLightbox('${im}')">`).join('')}</div>`;
+    }
+    if (msg.files && msg.files.length) {
+      filesHtml = `<div class="message-files">${msg.files.map(f => `
+        <div class="message-file">
+          <span class="message-file-icon">📄</span>
+          <span>${escapeHtml(f.name)}</span>
+          <span style="color: var(--text-3); font-size: 11px;">(${formatSize(f.size)})</span>
+        </div>`).join('')}</div>`;
+    }
+    contentHtml = `<div class="message-content">${escapeHtml(msg.content || '')}</div>`;
+  } else if (msg.role === 'assistant') {
+    contentHtml = `<div class="message-content md-content">${renderMarkdown(msg.content || '')}</div>`;
+  } else {
+    contentHtml = `<div class="message-content" style="color: var(--warn); font-size: 13px; font-family: var(--font-mono);">${escapeHtml(msg.content || '')}</div>`;
+  }
+
+  el.innerHTML = `
+    <div class="message-avatar">${avatarLetter}</div>
+    <div class="message-body">
+      <div class="message-meta">
+        <span class="message-role">${msg.role === 'user' ? 'Bạn' : msg.role === 'assistant' ? 'AI' : 'Hệ thống'}</span>
+        ${msg.model ? `<span class="message-model">${escapeHtml(msg.model)}</span>` : ''}
+        ${msg.usage ? `<span style="color:var(--text-3);">${msg.usage.prompt_tokens || 0}→${msg.usage.completion_tokens || 0} tokens</span>` : ''}
+      </div>
+      ${imagesHtml}
+      ${filesHtml}
+      ${contentHtml}
+      <div class="message-actions">
+        <button class="msg-action-btn" data-action="copy">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Sao chép
+        </button>
+        ${msg.role === 'user' ? `<button class="msg-action-btn" data-action="edit">✎ Sửa & gửi lại</button>` : ''}
+        ${msg.role === 'assistant' ? `<button class="msg-action-btn" data-action="regen">↻ Tạo lại</button>` : ''}
+        <button class="msg-action-btn" data-action="delete">🗑 Xóa</button>
+      </div>
+    </div>
+  `;
+
+  // Render math in assistant messages
+  if (msg.role === 'assistant') {
+    setTimeout(() => {
+      const contentEl = el.querySelector('.md-content');
+      if (contentEl) renderMathIn(contentEl);
+    }, 0);
+  }
+
+  // Action handlers
+  el.querySelectorAll('.msg-action-btn').forEach(btn => {
+    btn.addEventListener('click', () => handleMessageAction(btn.dataset.action, idx));
+  });
+
+  return el;
+}
+
+function handleMessageAction(action, idx) {
+  const chat = state.chats[state.currentChatId];
+  if (!chat) return;
+  const msg = chat.messages[idx];
+  if (!msg) return;
+
+  if (action === 'copy') {
+    navigator.clipboard.writeText(msg.content || '').then(() => toast('Đã sao chép', 'success'));
+  } else if (action === 'edit' && msg.role === 'user') {
+    // Set text to input, truncate messages after this
+    $('#inputBox').value = msg.content || '';
+    autoGrowInput();
+    updateTokenCounter();
+    chat.messages = chat.messages.slice(0, idx);
+    saveCurrentChat();
+    renderMessages();
+    toggleWelcome(chat.messages.length === 0);
+    $('#inputBox').focus();
+  } else if (action === 'regen' && msg.role === 'assistant') {
+    // Delete from this assistant message (and anything after), re-send from previous user message
+    chat.messages = chat.messages.slice(0, idx);
+    saveCurrentChat();
+    renderMessages();
+    sendChatRequest(/* resend last user */ true);
+  } else if (action === 'delete') {
+    chat.messages.splice(idx, 1);
+    saveCurrentChat();
+    renderMessages();
+    toggleWelcome(chat.messages.length === 0);
+  }
+}
+
+function scrollToBottom() {
+  const wrap = $('#messagesWrap');
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function openLightbox(src) {
+  $('#lightboxImg').src = src;
+  $('#lightbox').classList.add('open');
+}
+window.openLightbox = openLightbox;
+$('#lightbox').addEventListener('click', () => $('#lightbox').classList.remove('open'));
+
+/* ================================================
+   MODEL MANAGEMENT
+   ================================================ */
+function getModelMeta(id) {
+  return MODEL_DATA.find(m => m.id === id);
+}
+
+function updateModelUI() {
+  const m = getModelMeta(state.currentModel);
+  if (!m) {
+    $('#modelPickerName').textContent = state.currentModel || 'Chọn model...';
+    $('#modelPickerPrice').textContent = '';
+    $('#modelPickerIcon').textContent = '💬';
+    return;
+  }
+  const meta = GROUP_META[m.group];
+  $('#modelPickerIcon').textContent = meta.icon;
+  $('#modelPickerName').textContent = m.id;
+  if (m.inp !== null) {
+    $('#modelPickerPrice').textContent = `${m.inp}x / ${m.out}x`;
+    $('#modelPickerPrice').style.display = '';
+  } else {
+    $('#modelPickerPrice').style.display = 'none';
+  }
+  updateContextBar();
+}
+
+function renderModelGroups(filter = '') {
+  const container = $('#modelGroups');
+  container.innerHTML = '';
+  const filterLow = filter.toLowerCase().trim();
+
+  Object.keys(GROUP_META).forEach(groupKey => {
+    const meta = GROUP_META[groupKey];
+    let models = MODEL_DATA.filter(m => m.group === groupKey);
+    if (filterLow) models = models.filter(m => m.id.toLowerCase().includes(filterLow));
+    if (models.length === 0) return;
+
+    // Sort: top > high > mid > low, within tier by presence of pricing
+    const tierOrder = { top: 0, high: 1, mid: 2, low: 3 };
+    models.sort((a, b) => (tierOrder[a.tier] - tierOrder[b.tier]) || a.id.localeCompare(b.id));
+
+    const group = document.createElement('div');
+    group.className = 'model-group';
+    group.innerHTML = `<div class="model-group-header">${meta.icon} ${meta.label} <span style="font-weight:400; color:var(--text-3);">— ${meta.desc}</span></div>`;
+
+    models.forEach(m => {
+      const opt = document.createElement('div');
+      const status = state.modelStatus[m.id] || { status: 'unknown' };
+      const statusClass = status.status === 'available' ? 'available' :
+                          status.status === 'unavailable' ? 'unavailable' :
+                          status.status === 'checking' ? 'checking' : 'unknown';
+      const isUnavailable = status.status === 'unavailable';
+      opt.className = 'model-option' + (m.id === state.currentModel ? ' selected' : '') + (isUnavailable ? ' unavailable' : '');
+      const badge = TIER_BADGE[m.tier];
+      const priceStr = m.inp !== null ? `${m.inp}x → ${m.out}x` : '—';
+      const statusTitle = status.status === 'available' ? 'Khả dụng' :
+                          status.status === 'unavailable' ? ('Không dùng được' + (status.error ? ': ' + status.error : '')) :
+                          status.status === 'checking' ? 'Đang kiểm tra...' :
+                          'Chưa kiểm tra (click "Kiểm tra" để test)';
+      opt.innerHTML = `
+        <span class="model-status-dot ${statusClass}" title="${escapeHtml(statusTitle)}"></span>
+        <span class="model-option-name">${m.id}</span>
+        <span class="model-option-badge ${badge.cls}">${badge.label}</span>
+        <span class="model-option-price">${priceStr}</span>
+      `;
+      opt.addEventListener('click', () => {
+        if (isUnavailable) {
+          if (!confirm(`Model "${m.id}" bị đánh dấu không dùng được. Vẫn chọn?`)) return;
+        }
+        state.currentModel = m.id;
+        updateModelUI();
+        saveCurrentChat();
+        closeModals();
+        toast('Đã chọn ' + m.id, 'success', 2000);
+      });
+      group.appendChild(opt);
+    });
+    container.appendChild(group);
+  });
+
+  if (!container.children.length) {
+    container.innerHTML = '<div style="padding:40px; text-align:center; color:var(--text-3);">Không tìm thấy model nào.</div>';
+  }
+}
+
+/* ================================================
+   AVAILABILITY CHECK
+   ================================================ */
+async function checkOneModel(modelId) {
+  if (!state.apiKey) return { status: 'unavailable', error: 'No API key' };
+  state.modelStatus[modelId] = { status: 'checking', checkedAt: Date.now() };
+
+  // Skip check for non-chat models (image, voice, embedding) - test would fail anyway
+  const m = getModelMeta(modelId);
+  if (m && (m.group === 'image' || m.group === 'voice' || m.group === 'utility')) {
+    state.modelStatus[modelId] = { status: 'unknown', error: 'Cần endpoint riêng', checkedAt: Date.now() };
+    return state.modelStatus[modelId];
+  }
+
+  try {
+    const ctl = new AbortController();
+    const tid = setTimeout(() => ctl.abort(), 15000);
+    const res = await fetch(state.baseUrl + '/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + state.apiKey,
+      },
+      body: JSON.stringify({
+        model: modelId,
+        messages: [{ role: 'user', content: 'hi' }],
+        max_tokens: 1,
+        stream: false,
+      }),
+      signal: ctl.signal,
+    });
+    clearTimeout(tid);
+    if (res.ok) {
+      const txt = await res.text();
+      // Check if content actually has answer or just upstream error
+      try {
+        const j = JSON.parse(txt);
+        const c = j.choices?.[0]?.message?.content || '';
+        if (/\[An error occurred|upstream error|model.*not.*found/i.test(c)) {
+          state.modelStatus[modelId] = { status: 'unavailable', error: 'Upstream error', checkedAt: Date.now() };
+        } else {
+          state.modelStatus[modelId] = { status: 'available', checkedAt: Date.now() };
+        }
+      } catch (e) {
+        state.modelStatus[modelId] = { status: 'available', checkedAt: Date.now() };
+      }
+    } else {
+      const t = await res.text();
+      let errMsg = 'HTTP ' + res.status;
+      try { errMsg = JSON.parse(t).error?.message || errMsg; } catch (e) {}
+      state.modelStatus[modelId] = { status: 'unavailable', error: errMsg.slice(0, 100), checkedAt: Date.now() };
+    }
+  } catch (e) {
+    state.modelStatus[modelId] = { status: 'unavailable', error: e.message.slice(0, 100), checkedAt: Date.now() };
+  }
+  return state.modelStatus[modelId];
+}
+
+async function checkModelsBatch(modelIds, concurrency = 4) {
+  const progress = $('#checkProgress');
+  progress.style.display = 'block';
+  let done = 0;
+  const total = modelIds.length;
+  progress.textContent = `Đang kiểm tra... 0/${total}`;
+
+  // Update UI as we go
+  const queue = [...modelIds];
+  const workers = [];
+  for (let i = 0; i < concurrency; i++) {
+    workers.push((async () => {
+      while (queue.length > 0) {
+        const id = queue.shift();
+        if (!id) break;
+        // Mark checking immediately for UI
+        state.modelStatus[id] = { status: 'checking' };
+        renderModelGroups($('#modelSearchInput').value || '');
+        await checkOneModel(id);
+        done++;
+        progress.textContent = `Đang kiểm tra... ${done}/${total}`;
+        renderModelGroups($('#modelSearchInput').value || '');
+        saveModelStatus();
+      }
+    })());
+  }
+  await Promise.all(workers);
+
+  const ok = modelIds.filter(id => state.modelStatus[id]?.status === 'available').length;
+  const bad = modelIds.filter(id => state.modelStatus[id]?.status === 'unavailable').length;
+  progress.textContent = `Xong! ${ok} khả dụng, ${bad} không dùng được, ${total - ok - bad} bỏ qua.`;
+  setTimeout(() => { progress.style.display = 'none'; }, 5000);
+  toast(`Đã kiểm tra ${total} model: ${ok} OK, ${bad} lỗi`, 'success', 4000);
+}
+
+async function checkAllModels() {
+  if (!state.apiKey) { toast('Cần API key', 'warn'); return; }
+  if (!confirm('Kiểm tra tất cả ~80 model sẽ tốn ~80 request và 1 ít credit (mỗi request max_tokens=1, rất nhỏ). Tiếp tục?')) return;
+  // Only check chat-able groups
+  const ids = MODEL_DATA.filter(m => !['image', 'voice', 'utility'].includes(m.group)).map(m => m.id);
+  await checkModelsBatch(ids, 5);
+}
+
+async function checkVisibleModels() {
+  if (!state.apiKey) { toast('Cần API key', 'warn'); return; }
+  const filter = $('#modelSearchInput').value.toLowerCase().trim();
+  const filtered = MODEL_DATA.filter(m => !['image', 'voice', 'utility'].includes(m.group));
+  const ids = filter
+    ? filtered.filter(m => m.id.toLowerCase().includes(filter)).map(m => m.id)
+    : filtered.map(m => m.id);
+  if (ids.length === 0) { toast('Không có model nào để kiểm tra', 'warn'); return; }
+  if (ids.length > 20 && !confirm(`Sẽ kiểm tra ${ids.length} model. Tiếp tục?`)) return;
+  await checkModelsBatch(ids, 5);
+}
+
+async function fetchModelsFromAPI() {
+  if (!state.apiKey) { toast('Cần API key trước', 'warn'); return; }
+  try {
+    const res = await fetch(state.baseUrl + '/models', {
+      headers: { 'Authorization': 'Bearer ' + state.apiKey },
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (data.data && Array.isArray(data.data)) {
+      state.availableModels = data.data.map(m => m.id);
+      toast(`Lấy được ${state.availableModels.length} model từ API`, 'success');
+    }
+  } catch (e) {
+    toast('Không lấy được danh sách model: ' + e.message, 'error');
+  }
+}
+
+/* ================================================
+   SEND / STREAM
+   ================================================ */
+function isVisionModel(id) {
+  return /gpt-4o|gpt-5|gemini|claude/i.test(id) && !/tts|transcribe|embedding|moderation|image/i.test(id);
+}
+
+async function sendChatRequest(resend = false) {
+  if (state.isGenerating) return;
+  if (!state.apiKey) { showSettings(); toast('Hãy nhập API key trước', 'warn'); return; }
+
+  let chat = state.chats[state.currentChatId];
+  if (!chat) { createNewChat(); chat = state.chats[state.currentChatId]; }
+
+  // If resend=false, build user message from input
+  if (!resend) {
+    const text = $('#inputBox').value.trim();
+    const hasAttachments = state.attachments.length > 0;
+    if (!text && !hasAttachments) return;
+
+    const userMsg = {
+      role: 'user',
+      content: text,
+    };
+    const images = state.attachments.filter(a => a.type === 'image').map(a => a.dataUrl);
+    const files = state.attachments.filter(a => a.type === 'file').map(a => ({ name: a.name, size: a.size }));
+    if (images.length) userMsg.images = images;
+    if (files.length) userMsg.files = files;
+
+    // Append extracted text from files to content
+    let extraContext = '';
+    state.attachments.filter(a => a.type === 'file' && a.text).forEach(a => {
+      extraContext += `\n\n--- Nội dung file "${a.name}" ---\n${a.text}\n--- hết file ---\n`;
+    });
+    if (extraContext) userMsg.content = (userMsg.content || '') + extraContext;
+
+    chat.messages.push(userMsg);
+    $('#inputBox').value = '';
+    autoGrowInput();
+    state.attachments = [];
+    renderAttachments();
+    updateTokenCounter();
+    renderMessages();
+    toggleWelcome(false);
+  }
+
+  // Build messages for API
+  const apiMessages = [];
+  if (state.systemPrompt && state.systemPrompt.trim()) {
+    apiMessages.push({ role: 'system', content: state.systemPrompt });
+  }
+  chat.messages.forEach(m => {
+    if (m.role === 'system' && !m.content) return;
+    if (m.role === 'user' && m.images && m.images.length && isVisionModel(state.currentModel)) {
+      const content = [];
+      if (m.content) content.push({ type: 'text', text: m.content });
+      m.images.forEach(url => content.push({ type: 'image_url', image_url: { url } }));
+      apiMessages.push({ role: 'user', content });
+    } else {
+      apiMessages.push({ role: m.role, content: m.content || '' });
+    }
+  });
+
+  // Placeholder assistant message
+  const assistantMsg = {
+    role: 'assistant',
+    content: '',
+    model: state.currentModel,
+    streaming: true,
+  };
+  chat.messages.push(assistantMsg);
+  renderMessages();
+
+  // Switch send button → stop
+  setGenerating(true);
+
+  state.abortController = new AbortController();
+  let fullContent = '';
+  let usage = null;
+  let reasoningContent = '';
+
+  try {
+    const body = {
+      model: state.currentModel,
+      messages: apiMessages,
+      temperature: state.temperature,
+      top_p: state.topP,
+      max_tokens: state.maxTokens,
+      stream: true,
+    };
+
+    console.log('[Hapuppy] Sending request:', { url: state.baseUrl + '/chat/completions', model: body.model, msgCount: apiMessages.length });
+
+    const res = await fetch(state.baseUrl + '/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + state.apiKey,
+        'Accept': 'text/event-stream, application/json',
+      },
+      body: JSON.stringify(body),
+      signal: state.abortController.signal,
+    });
+
+    console.log('[Hapuppy] Response status:', res.status, 'Content-Type:', res.headers.get('content-type'));
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error('[Hapuppy] Error response body:', errText);
+      let errMsg = `HTTP ${res.status}`;
+      try {
+        const errJson = JSON.parse(errText);
+        errMsg = errJson.error?.message || errJson.message || errMsg;
+      } catch (e) {
+        if (errText && errText.length < 500) errMsg += ': ' + errText;
+      }
+      throw new Error(errMsg);
+    }
+
+    const contentType = (res.headers.get('content-type') || '').toLowerCase();
+    const isSSE = contentType.includes('event-stream') || contentType.includes('stream');
+
+    if (!isSSE) {
+      // Server returned regular JSON even though we asked for stream
+      console.warn('[Hapuppy] Response is not SSE, parsing as JSON');
+      const rawText = await res.text();
+      console.log('[Hapuppy] Raw response (first 500 chars):', rawText.slice(0, 500));
+
+      // Some servers return SSE-like text with wrong content-type — try parsing as SSE anyway
+      if (rawText.includes('data:')) {
+        const result = parseSSEText(rawText);
+        fullContent = result.content;
+        usage = result.usage;
+        reasoningContent = result.reasoning;
+      } else {
+        // Parse as regular JSON
+        try {
+          const json = JSON.parse(rawText);
+          const choice = json.choices?.[0];
+          fullContent = choice?.message?.content || choice?.text || '';
+          reasoningContent = choice?.message?.reasoning_content || '';
+          usage = json.usage || null;
+          if (!fullContent && !reasoningContent) {
+            // Last resort: show the raw JSON for debug
+            fullContent = '⚠️ Server trả về JSON không có content:\n```json\n' + JSON.stringify(json, null, 2) + '\n```';
+          }
+        } catch (e) {
+          fullContent = '⚠️ Không parse được response:\n```\n' + rawText + '\n```';
+        }
+      }
+
+      // Show combined content (reasoning + final answer if both present)
+      const display = reasoningContent
+        ? `> 💭 **Suy luận:**\n> ${reasoningContent.replace(/\n/g, '\n> ')}\n\n${fullContent}`
+        : fullContent;
+      assistantMsg.content = display;
+      updateLastAssistantMessage(display, false);
+    } else {
+      // Proper SSE streaming
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let gotAnyContent = false;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        // Normalize line endings
+        buffer = buffer.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (!trimmed) continue;
+          if (!trimmed.startsWith('data:')) continue;
+          const data = trimmed.slice(5).trim();
+          if (data === '[DONE]') continue;
+          if (!data) continue;
+          try {
+            const json = JSON.parse(data);
+
+            // Check for error field in the chunk itself
+            if (json.error) {
+              const em = json.error.message || json.error.msg || JSON.stringify(json.error);
+              throw new Error(em);
+            }
+
+            const choice = json.choices?.[0];
+            const delta = choice?.delta || choice?.message || {};
+            if (delta.content) {
+              fullContent += delta.content;
+              gotAnyContent = true;
+            }
+            if (delta.reasoning_content) {
+              reasoningContent += delta.reasoning_content;
+              gotAnyContent = true;
+            }
+            if (json.usage) usage = json.usage;
+            if (gotAnyContent) {
+              const display = reasoningContent
+                ? `> 💭 **Suy luận:**\n> ${reasoningContent.replace(/\n/g, '\n> ')}\n\n${fullContent}`
+                : fullContent;
+              assistantMsg.content = display;
+              updateLastAssistantMessage(display, true);
+            }
+          } catch (e) {
+            // Re-throw explicit API errors, ignore parse errors
+            if (e.message && !e.message.includes('JSON')) throw e;
+            console.warn('[Hapuppy] Chunk parse error:', e.message, 'line:', trimmed.slice(0, 100));
+          }
+        }
+      }
+
+      if (!gotAnyContent) {
+        console.warn('[Hapuppy] Stream ended with no content. Last buffer:', buffer);
+        fullContent = '⚠️ Server không trả về content nào. Model có thể không hỗ trợ streaming — thử đổi model khác hoặc kiểm tra Console (F12) xem log.';
+        assistantMsg.content = fullContent;
+        updateLastAssistantMessage(fullContent, false);
+      }
+    }
+
+    assistantMsg.streaming = false;
+
+    // Detect upstream provider errors returned as content (common with reasoning models like deepseek-r1, o1)
+    const errorPatterns = [
+      /^\s*\[An error occurred\.?\s*Reference:/i,
+      /^\s*\{?\s*"?error"?\s*[:=]/i,
+      /^\s*internal server error/i,
+      /^\s*upstream error/i,
+      /^\s*\[error\]/i,
+    ];
+    const trimmedContent = (assistantMsg.content || '').trim();
+    const isErrorResponse = errorPatterns.some(p => p.test(trimmedContent));
+
+    if (isErrorResponse && trimmedContent.length < 800) {
+      const refMatch = trimmedContent.match(/Reference:\s*([a-f0-9\-]+)/i);
+      const ref = refMatch ? refMatch[1] : null;
+      const errMsg = [
+        `❌ **Server trả về lỗi** cho model \`${state.currentModel}\``,
+        ref ? `\nReference: \`${ref}\`` : '',
+        `\n**Nguyên nhân có thể:** nhà cung cấp model phía sau Hapuppy đang có vấn đề (reasoning model như \`deepseek-r1\`, \`o1\`, \`o3\` hay bị flaky vì load nặng).`,
+        `\n**Thử các model ổn định hơn:**`,
+        `- \`gpt-4o-mini\` — nhanh, rẻ, ổn định`,
+        `- \`gemini-2.5-flash\` — rất nhanh`,
+        `- \`claude-haiku-4-5-20251001\` — chất lượng cao`,
+        `- \`gpt-5-mini\` hoặc \`gpt-5-nano\``,
+        `\n*Raw response: \`${trimmedContent.slice(0, 200)}\`*`,
+      ].filter(Boolean).join('\n');
+      assistantMsg.content = errMsg;
+      updateLastAssistantMessage(errMsg, false);
+      // Mark this model as unavailable
+      state.modelStatus[state.currentModel] = { status: 'unavailable', error: 'Upstream error', checkedAt: Date.now() };
+      saveModelStatus();
+      toast('Model bị lỗi phía server. Thử model khác.', 'warn', 6000);
+    }
+
+    if (usage) {
+      assistantMsg.usage = usage;
+      state.sessionTokens.input += usage.prompt_tokens || 0;
+      state.sessionTokens.output += usage.completion_tokens || 0;
+      const m = getModelMeta(state.currentModel);
+      if (m && m.inp !== null) {
+        state.sessionCost += (usage.prompt_tokens || 0) * m.inp + (usage.completion_tokens || 0) * m.out;
+      }
+    } else {
+      const estIn = apiMessages.reduce((sum, msg) => sum + estimateTokens(typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)), 0);
+      const estOut = estimateTokens(fullContent + reasoningContent);
+      state.sessionTokens.input += estIn;
+      state.sessionTokens.output += estOut;
+      const m = getModelMeta(state.currentModel);
+      if (m && m.inp !== null) {
+        state.sessionCost += estIn * m.inp + estOut * m.out;
+      }
+      assistantMsg.usage = { prompt_tokens: estIn, completion_tokens: estOut, estimated: true };
+    }
+    state.sessionMessages++;
+
+    // Mark model as available since it just worked (only if response wasn't an error)
+    if (!isErrorResponse) {
+      state.modelStatus[state.currentModel] = { status: 'available', checkedAt: Date.now() };
+      saveModelStatus();
+    }
+
+    // Persist stats
+    saveStats();
+
+    // Finalize render (remove cursor, render math)
+    updateLastAssistantMessage(assistantMsg.content, false);
+    updateStats();
+
+    if (chat.title === 'Cuộc trò chuyện mới' && chat.messages.length >= 2) {
+      autoTitleChat(chat);
+    }
+
+    await saveCurrentChat();
+
+  } catch (e) {
+    console.error('[Hapuppy] Request failed:', e);
+    assistantMsg.streaming = false;
+    if (e.name === 'AbortError') {
+      assistantMsg.content = (assistantMsg.content || '') + '\n\n*(đã dừng)*';
+    } else {
+      const errMsg = e.message || String(e);
+      if (!assistantMsg.content) {
+        assistantMsg.content = `❌ **Lỗi:** ${errMsg}\n\n*(Mở Console — phím F12 — để xem chi tiết)*`;
+      } else {
+        assistantMsg.content += `\n\n❌ **Lỗi giữa chừng:** ${errMsg}`;
+      }
+      if (/401|Invalid API key/i.test(errMsg)) {
+        toast('API key không hợp lệ. Mở Cài đặt kiểm tra.', 'error', 6000);
+      } else if (/429|rate limit/i.test(errMsg)) {
+        toast('Chạm rate limit. Đợi vài giây rồi thử lại.', 'warn');
+      } else if (/model_not_found|No available channel/i.test(errMsg)) {
+        // Mark this model as unavailable
+        state.modelStatus[state.currentModel] = { status: 'unavailable', error: 'Model không có trong gói', checkedAt: Date.now() };
+        saveModelStatus();
+        toast('Model này không có trong gói của bạn. Chọn model khác.', 'warn', 6000);
+      } else {
+        toast('Lỗi: ' + errMsg, 'error');
+      }
+    }
+    renderMessages();
+    await saveCurrentChat();
+  } finally {
+    setGenerating(false);
+    state.abortController = null;
+  }
+}
+
+// Helper — parse SSE text blob (when server returns SSE but with wrong content-type)
+function parseSSEText(text) {
+  let content = '';
+  let reasoning = '';
+  let usage = null;
+  const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  const lines = normalized.split('\n');
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith('data:')) continue;
+    const data = trimmed.slice(5).trim();
+    if (!data || data === '[DONE]') continue;
+    try {
+      const json = JSON.parse(data);
+      const choice = json.choices?.[0];
+      const delta = choice?.delta || choice?.message || {};
+      if (delta.content) content += delta.content;
+      if (delta.reasoning_content) reasoning += delta.reasoning_content;
+      if (json.usage) usage = json.usage;
+    } catch (e) {}
+  }
+  return { content, reasoning, usage };
+}
+
+function updateLastAssistantMessage(content, streaming) {
+  const msgs = $$('.message');
+  if (!msgs.length) return;
+  const lastEl = msgs[msgs.length - 1];
+  if (!lastEl.classList.contains('assistant')) return;
+  const contentEl = lastEl.querySelector('.message-content');
+  if (!contentEl) return;
+  contentEl.innerHTML = renderMarkdown(content);
+  if (streaming) {
+    const last = contentEl.lastElementChild || contentEl;
+    last.classList.add('stream-cursor');
+  } else {
+    renderMathIn(contentEl);
+  }
+  scrollToBottom();
+}
+
+async function autoTitleChat(chat) {
+  const firstUserMsg = chat.messages.find(m => m.role === 'user');
+  if (!firstUserMsg) return;
+  const content = typeof firstUserMsg.content === 'string' ? firstUserMsg.content : '';
+  // Simple: take first 50 chars
+  chat.title = content.slice(0, 50).replace(/\s+/g, ' ').trim() || 'Cuộc trò chuyện mới';
+  await saveCurrentChat();
+  renderChatList();
+
+  // Could try API call for smarter title, but keep simple to save credits
+}
+
+function setGenerating(on) {
+  state.isGenerating = on;
+  const sendBtn = $('#sendBtn');
+  const sendIcon = $('#sendIcon');
+  const stopIcon = $('#stopIcon');
+  if (on) {
+    sendBtn.classList.add('stop');
+    sendBtn.disabled = false;
+    sendBtn.title = 'Dừng (Esc)';
+    sendIcon.style.display = 'none';
+    stopIcon.style.display = '';
+  } else {
+    sendBtn.classList.remove('stop');
+    updateSendButtonState();
+    sendBtn.title = 'Gửi (Enter)';
+    sendIcon.style.display = '';
+    stopIcon.style.display = 'none';
+  }
+}
+
+function updateSendButtonState() {
+  const btn = $('#sendBtn');
+  if (state.isGenerating) { btn.disabled = false; return; }
+  const hasText = $('#inputBox').value.trim().length > 0;
+  const hasAttach = state.attachments.length > 0;
+  btn.disabled = !(hasText || hasAttach);
+}
+
+/* ================================================
+   ATTACHMENTS
+   ================================================ */
+function renderAttachments() {
+  const container = $('#attachmentsPreview');
+  container.innerHTML = '';
+  state.attachments.forEach((a, i) => {
+    const item = document.createElement('div');
+    item.className = 'attachment-item';
+    const thumb = a.type === 'image'
+      ? `<img src="${a.dataUrl}" class="attachment-thumb">`
+      : `<div class="attachment-thumb">📄</div>`;
+    item.innerHTML = `
+      ${thumb}
+      <div class="attachment-info">
+        <div style="overflow:hidden;text-overflow:ellipsis;">${escapeHtml(a.name)}</div>
+        <div class="attachment-size">${formatSize(a.size)}</div>
+      </div>
+      <button class="attachment-remove" data-i="${i}">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    `;
+    item.querySelector('.attachment-remove').addEventListener('click', () => {
+      state.attachments.splice(i, 1);
+      renderAttachments();
+      updateSendButtonState();
+    });
+    container.appendChild(item);
+  });
+  updateSendButtonState();
+}
+
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+function fileToText(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = reject;
+    r.readAsText(file);
+  });
+}
+
+async function handleImageFiles(files) {
+  for (const f of files) {
+    if (!f.type.startsWith('image/')) continue;
+    if (f.size > 10 * 1024 * 1024) { toast(`Ảnh "${f.name}" quá lớn (>10MB)`, 'warn'); continue; }
+    try {
+      const dataUrl = await fileToDataUrl(f);
+      state.attachments.push({ type: 'image', name: f.name, size: f.size, dataUrl });
+    } catch (e) { toast('Không đọc được ảnh: ' + f.name, 'error'); }
+  }
+  renderAttachments();
+}
+
+async function handleDocFiles(files) {
+  for (const f of files) {
+    if (f.size > 5 * 1024 * 1024) { toast(`File "${f.name}" quá lớn (>5MB)`, 'warn'); continue; }
+    try {
+      let text = '';
+      if (f.name.toLowerCase().endsWith('.pdf')) {
+        toast('File PDF: cần extract thủ công hoặc dùng công cụ khác. Hiện chỉ hỗ trợ text files.', 'warn', 5000);
+        continue;
+      } else {
+        text = await fileToText(f);
+      }
+      state.attachments.push({ type: 'file', name: f.name, size: f.size, text });
+    } catch (e) { toast('Không đọc được file: ' + f.name, 'error'); }
+  }
+  renderAttachments();
+}
+
+/* ================================================
+   STATS & UI UPDATES
+   ================================================ */
+function updateStats() {
+  $('#statInputTokens').textContent = formatNumber(state.sessionTokens.input);
+  $('#statOutputTokens').textContent = formatNumber(state.sessionTokens.output);
+  $('#statMessages').textContent = state.sessionMessages;
+  $('#statCost').textContent = state.sessionCost.toFixed(2);
+  $('#costValue').textContent = state.sessionCost.toFixed(2) + 'x';
+  updateContextBar();
+}
+
+function updateContextBar() {
+  const chat = state.chats[state.currentChatId];
+  const meta = getModelMeta(state.currentModel);
+  const ctx = meta?.ctx || 128000;
+  let usedTokens = 0;
+  if (chat) {
+    chat.messages.forEach(m => {
+      usedTokens += estimateTokens(typeof m.content === 'string' ? m.content : JSON.stringify(m.content));
+    });
+  }
+  if (state.systemPrompt) usedTokens += estimateTokens(state.systemPrompt);
+  const pct = Math.min(100, (usedTokens / ctx) * 100);
+  $('#contextBarFill').style.width = pct + '%';
+  $('#contextBarFill').className = 'context-bar-fill' + (pct > 80 ? ' danger' : pct > 50 ? ' warn' : '');
+  $('#contextLabel').textContent = `${formatNumber(usedTokens)} / ${formatNumber(ctx)} tokens`;
+  $('#contextPct').textContent = pct.toFixed(0) + '%';
+}
+
+function updateTokenCounter() {
+  const text = $('#inputBox').value;
+  const tokens = estimateTokens(text);
+  $('#tokenCounter').textContent = `${tokens} tokens`;
+}
+
+function autoGrowInput() {
+  const input = $('#inputBox');
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight, 240) + 'px';
+}
+
+/* ================================================
+   EXPORT/IMPORT
+   ================================================ */
+function exportCurrentChatMarkdown() {
+  const chat = state.chats[state.currentChatId];
+  if (!chat) return;
+  let md = `# ${chat.title}\n\n`;
+  md += `*Tạo lúc: ${new Date(chat.createdAt).toLocaleString('vi-VN')}*\n\n`;
+  md += `*Model: ${chat.model}*\n\n---\n\n`;
+  chat.messages.forEach(m => {
+    const roleLabel = m.role === 'user' ? '👤 **Bạn**' : m.role === 'assistant' ? '🤖 **AI**' : '⚙️ **Hệ thống**';
+    md += `${roleLabel}:\n\n${m.content || ''}\n\n---\n\n`;
+  });
+  downloadText(md, `${chat.title.slice(0, 40).replace(/[^a-zA-Z0-9\u00C0-\u024F\u1E00-\u1EFF]/g, '_')}.md`, 'text/markdown');
+}
+
+function exportCurrentChatJson() {
+  const chat = state.chats[state.currentChatId];
+  if (!chat) return;
+  downloadText(JSON.stringify(chat, null, 2), `${chat.title.slice(0,40).replace(/[^a-zA-Z0-9]/g, '_')}.json`, 'application/json');
+}
+
+function exportAllChats() {
+  const all = Object.values(state.chats);
+  downloadText(JSON.stringify({ exportedAt: new Date().toISOString(), count: all.length, chats: all }, null, 2), `hapuppy-chats-${Date.now()}.json`, 'application/json');
+}
+
+function downloadText(text, filename, mime) {
+  const blob = new Blob([text], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function importChatsFromFile(file) {
+  try {
+    const text = await fileToText(file);
+    const data = JSON.parse(text);
+    const chats = data.chats || [data];
+    let imported = 0;
+    for (const c of chats) {
+      if (c.id && c.messages) {
+        c.id = uid(); // Regenerate to avoid collision
+        c.updatedAt = Date.now();
+        state.chats[c.id] = c;
+        await idbPut(c);
+        imported++;
+      }
+    }
+    toast(`Đã nhập ${imported} cuộc trò chuyện`, 'success');
+    renderChatList();
+  } catch (e) {
+    toast('File không hợp lệ: ' + e.message, 'error');
+  }
+}
+
+/* ================================================
+   MODAL
+   ================================================ */
+function openModal(id) { $(id).classList.add('open'); }
+function closeModals() { $$('.modal-backdrop').forEach(m => m.classList.remove('open')); }
+
+$$('[data-close-modal]').forEach(b => b.addEventListener('click', closeModals));
+$$('.modal-backdrop').forEach(b => b.addEventListener('click', (e) => { if (e.target === b) closeModals(); }));
+
+function showSettings() {
+  $('#apiKeyInput').value = state.apiKey || '';
+  $('#baseUrlInput').value = state.baseUrl || DEFAULT_BASE_URL;
+  $('#testConnResult').textContent = '';
+  openModal('#settingsModal');
+}
+
+/* ================================================
+   THEME
+   ================================================ */
+function setTheme(theme) {
+  state.theme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('hapuppy-theme', theme);
+  $('#themeIconDark').style.display = theme === 'dark' ? 'none' : '';
+  $('#themeIconLight').style.display = theme === 'dark' ? '' : 'none';
+  // Update highlight.js theme
+  const hljsTheme = $('#hljs-theme');
+  hljsTheme.href = `https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/github${theme === 'dark' ? '-dark' : ''}.min.css`;
+}
+
+/* ================================================
+   API TEST
+   ================================================ */
+async function testConnection() {
+  const key = $('#apiKeyInput').value.trim();
+  const url = $('#baseUrlInput').value.trim().replace(/\/$/, '');
+  const result = $('#testConnResult');
+  if (!key) { result.innerHTML = '<span style="color:var(--danger);">Cần nhập API key</span>'; return; }
+  result.innerHTML = '<span style="color:var(--text-3);">Đang kiểm tra...</span>';
+  try {
+    const res = await fetch(url + '/models', {
+      headers: { 'Authorization': 'Bearer ' + key },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const count = (data.data || []).length;
+      result.innerHTML = `<span style="color:var(--success);">✓ Thành công — ${count} model khả dụng</span>`;
+    } else {
+      const t = await res.text();
+      let msg = `HTTP ${res.status}`;
+      try { msg = JSON.parse(t).error?.message || msg; } catch (e) {}
+      result.innerHTML = `<span style="color:var(--danger);">✕ Lỗi: ${escapeHtml(msg)}</span>`;
+    }
+  } catch (e) {
+    result.innerHTML = `<span style="color:var(--danger);">✕ Không kết nối được: ${escapeHtml(e.message)}</span>`;
+  }
+}
+
+/* ================================================
+   INIT & EVENT LISTENERS
+   ================================================ */
+async function init() {
+  // Load theme
+  const savedTheme = localStorage.getItem('hapuppy-theme');
+  const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  setTheme(savedTheme || (sysDark ? 'dark' : 'light'));
+
+  // Load key
+  state.apiKey = localStorage.getItem('hapuppy-key') || '';
+  state.baseUrl = localStorage.getItem('hapuppy-baseurl') || DEFAULT_BASE_URL;
+  const savedModel = localStorage.getItem('hapuppy-model');
+  if (savedModel) state.currentModel = savedModel;
+
+  // Load per-key stats and model status
+  loadStatsForCurrentKey();
+  loadModelStatus();
+
+  // Load chats from IndexedDB
+  await openDB();
+  const all = await idbGetAll();
+  all.forEach(c => { state.chats[c.id] = c; });
+
+  if (Object.keys(state.chats).length === 0) {
+    createNewChat();
+  } else {
+    const sorted = Object.values(state.chats).sort((a,b) => b.updatedAt - a.updatedAt);
+    loadChat(sorted[0].id);
+  }
+
+  updateModelUI();
+  renderChatList();
+  renderModelGroups();
+  updateStats();
+
+  // If no key, show setup modal
+  if (!state.apiKey) {
+    openModal('#setupModal');
+  }
+
+  // Window resize — show/hide mobile menu button
+  const updateMobile = () => {
+    $('#mobileSidebarBtn').style.display = window.innerWidth < 768 ? '' : 'none';
+  };
+  window.addEventListener('resize', updateMobile);
+  updateMobile();
+}
+
+// Event Listeners
+$('#newChatBtn').addEventListener('click', () => {
+  createNewChat();
+  if (window.innerWidth < 768) $('#app').classList.remove('show-sidebar');
+});
+
+$('#sidebarCollapseBtn').addEventListener('click', () => {
+  $('#app').classList.toggle('sidebar-collapsed');
+});
+$('#mobileSidebarBtn').addEventListener('click', () => {
+  $('#app').classList.toggle('show-sidebar');
+});
+
+$('#panelToggleBtn').addEventListener('click', () => {
+  if (window.innerWidth < 1100) {
+    $('#app').classList.toggle('show-panel');
+  } else {
+    $('#app').classList.toggle('panel-collapsed');
+  }
+});
+
+$('#chatSearch').addEventListener('input', renderChatList);
+
+$('#themeToggle').addEventListener('click', () => setTheme(state.theme === 'dark' ? 'light' : 'dark'));
+
+$('#openSettings').addEventListener('click', showSettings);
+
+$('#modelPickerBtn').addEventListener('click', () => {
+  renderModelGroups();
+  $('#modelSearchInput').value = '';
+  openModal('#modelModal');
+  setTimeout(() => $('#modelSearchInput').focus(), 100);
+});
+
+$('#modelSearchInput').addEventListener('input', (e) => renderModelGroups(e.target.value));
+
+// Model availability check buttons
+$('#checkAllBtn').addEventListener('click', checkAllModels);
+$('#checkVisibleBtn').addEventListener('click', checkVisibleModels);
+
+// Settings modal
+$('#toggleKeyVisibility').addEventListener('click', () => {
+  const inp = $('#apiKeyInput');
+  const btn = $('#toggleKeyVisibility');
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'Ẩn'; }
+  else { inp.type = 'password'; btn.textContent = 'Hiện'; }
+});
+
+$('#setupToggleKey').addEventListener('click', () => {
+  const inp = $('#setupApiKey');
+  const btn = $('#setupToggleKey');
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = 'Ẩn'; }
+  else { inp.type = 'password'; btn.textContent = 'Hiện'; }
+});
+
+$('#setupSaveBtn').addEventListener('click', async () => {
+  const key = $('#setupApiKey').value.trim();
+  const url = $('#setupBaseUrl').value.trim().replace(/\/$/, '');
+  const err = $('#setupError');
+  if (!key) { err.textContent = 'Cần nhập API key'; return; }
+  if (!url) { err.textContent = 'Cần nhập Base URL'; return; }
+  err.textContent = 'Đang test kết nối...';
+  try {
+    const res = await fetch(url + '/models', { headers: { 'Authorization': 'Bearer ' + key } });
+    if (!res.ok) {
+      const t = await res.text();
+      let msg = `HTTP ${res.status}`;
+      try { msg = JSON.parse(t).error?.message || msg; } catch (e) {}
+      err.textContent = '✕ ' + msg;
+      return;
+    }
+  } catch (e) {
+    err.textContent = '✕ ' + e.message;
+    return;
+  }
+  const isNewKey = key !== state.apiKey;
+  state.apiKey = key;
+  state.baseUrl = url;
+  localStorage.setItem('hapuppy-key', key);
+  localStorage.setItem('hapuppy-baseurl', url);
+  // Load per-key stats and model status (will be empty for new keys)
+  if (isNewKey) {
+    loadStatsForCurrentKey();
+    loadModelStatus();
+    updateStats();
+    renderModelGroups();
+  }
+  closeModals();
+  toast('Đã lưu — bắt đầu chat!', 'success');
+});
+
+$('#testConnBtn').addEventListener('click', testConnection);
+
+$('#refreshModelsBtn').addEventListener('click', fetchModelsFromAPI);
+
+$('#saveSettingsBtn').addEventListener('click', () => {
+  const key = $('#apiKeyInput').value.trim();
+  const url = $('#baseUrlInput').value.trim().replace(/\/$/, '');
+  if (!key) { toast('Cần API key', 'warn'); return; }
+  const isNewKey = key !== state.apiKey;
+  state.apiKey = key;
+  state.baseUrl = url || DEFAULT_BASE_URL;
+  localStorage.setItem('hapuppy-key', key);
+  localStorage.setItem('hapuppy-baseurl', state.baseUrl);
+  if (isNewKey) {
+    loadStatsForCurrentKey();
+    loadModelStatus();
+    updateStats();
+    renderModelGroups();
+    toast('Đã đổi key — thống kê chuyển sang key mới', 'info');
+  } else {
+    toast('Đã lưu cài đặt', 'success');
+  }
+  closeModals();
+});
+
+$('#exportAllBtn').addEventListener('click', exportAllChats);
+
+$('#importBtn').addEventListener('click', () => $('#importFile').click());
+$('#importFile').addEventListener('change', async (e) => {
+  const f = e.target.files[0];
+  if (f) await importChatsFromFile(f);
+  e.target.value = '';
+});
+
+$('#clearAllBtn').addEventListener('click', async () => {
+  if (!confirm('Xóa TẤT CẢ cuộc trò chuyện? Không thể hoàn tác.')) return;
+  state.chats = {};
+  await idbClear();
+  createNewChat();
+  closeModals();
+  toast('Đã xóa tất cả', 'success');
+});
+
+$('#exportMdBtn').addEventListener('click', exportCurrentChatMarkdown);
+$('#exportJsonBtn').addEventListener('click', exportCurrentChatJson);
+
+$('#resetStatsBtn').addEventListener('click', () => {
+  if (!confirm('Đặt lại thống kê (tokens, chi phí, tin nhắn) cho key hiện tại?')) return;
+  resetStats();
+  toast('Đã đặt lại thống kê', 'success');
+});
+
+// System prompt
+$('#systemPromptBox').addEventListener('input', (e) => {
+  state.systemPrompt = e.target.value;
+  saveCurrentChat();
+  updateContextBar();
+});
+$('#resetSystemBtn').addEventListener('click', () => {
+  state.systemPrompt = '';
+  $('#systemPromptBox').value = '';
+  saveCurrentChat();
+  updateContextBar();
+});
+
+$$('.template-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const t = chip.dataset.template;
+    const prompt = SYSTEM_TEMPLATES[t] || '';
+    state.systemPrompt = prompt;
+    $('#systemPromptBox').value = prompt;
+    saveCurrentChat();
+    updateContextBar();
+    toast('Đã áp dụng template', 'success');
+  });
+});
+
+// Parameters
+$('#tempSlider').addEventListener('input', (e) => {
+  state.temperature = parseFloat(e.target.value);
+  $('#tempValue').textContent = state.temperature.toFixed(2);
+  saveCurrentChat();
+});
+$('#maxTokensSlider').addEventListener('input', (e) => {
+  state.maxTokens = parseInt(e.target.value);
+  $('#maxTokensValue').textContent = state.maxTokens;
+  saveCurrentChat();
+});
+$('#topPSlider').addEventListener('input', (e) => {
+  state.topP = parseFloat(e.target.value);
+  $('#topPValue').textContent = state.topP.toFixed(2);
+  saveCurrentChat();
+});
+
+// Input box
+const inputBox = $('#inputBox');
+inputBox.addEventListener('input', () => {
+  autoGrowInput();
+  updateTokenCounter();
+  updateSendButtonState();
+});
+
+inputBox.addEventListener('focus', () => $('#inputWrapper').classList.add('focused'));
+inputBox.addEventListener('blur', () => $('#inputWrapper').classList.remove('focused'));
+
+inputBox.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    if (!state.isGenerating) sendChatRequest();
+  } else if (e.key === '/' && inputBox.value === '') {
+    e.preventDefault();
+    renderModelGroups();
+    openModal('#modelModal');
+    setTimeout(() => $('#modelSearchInput').focus(), 100);
+  }
+});
+
+// Paste images
+inputBox.addEventListener('paste', (e) => {
+  const items = e.clipboardData?.items || [];
+  const imageFiles = [];
+  for (const item of items) {
+    if (item.kind === 'file' && item.type.startsWith('image/')) {
+      const f = item.getAsFile();
+      if (f) imageFiles.push(f);
+    }
+  }
+  if (imageFiles.length) {
+    e.preventDefault();
+    handleImageFiles(imageFiles);
+  }
+});
+
+// Drag & drop onto input area
+const inputWrapper = $('#inputWrapper');
+['dragenter', 'dragover'].forEach(ev => inputWrapper.addEventListener(ev, (e) => {
+  e.preventDefault(); e.stopPropagation();
+  inputWrapper.classList.add('drag-over');
+}));
+['dragleave', 'drop'].forEach(ev => inputWrapper.addEventListener(ev, (e) => {
+  e.preventDefault(); e.stopPropagation();
+  inputWrapper.classList.remove('drag-over');
+}));
+inputWrapper.addEventListener('drop', (e) => {
+  const files = Array.from(e.dataTransfer.files || []);
+  const images = files.filter(f => f.type.startsWith('image/'));
+  const docs = files.filter(f => !f.type.startsWith('image/'));
+  if (images.length) handleImageFiles(images);
+  if (docs.length) handleDocFiles(docs);
+});
+
+// Send button
+$('#sendBtn').addEventListener('click', () => {
+  if (state.isGenerating) {
+    if (state.abortController) state.abortController.abort();
+  } else {
+    sendChatRequest();
+  }
+});
+
+// Attach buttons
+$('#attachImageBtn').addEventListener('click', () => $('#fileInputImage').click());
+$('#attachFileBtn').addEventListener('click', () => $('#fileInputDoc').click());
+$('#fileInputImage').addEventListener('change', async (e) => {
+  await handleImageFiles(Array.from(e.target.files || []));
+  e.target.value = '';
+});
+$('#fileInputDoc').addEventListener('change', async (e) => {
+  await handleDocFiles(Array.from(e.target.files || []));
+  e.target.value = '';
+});
+
+// Welcome suggestion cards
+$$('.suggestion-card').forEach(card => {
+  card.addEventListener('click', () => {
+    inputBox.value = card.dataset.prompt;
+    autoGrowInput();
+    updateTokenCounter();
+    updateSendButtonState();
+    inputBox.focus();
+  });
+});
+
+// Global keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  // Esc closes modals and stops generation
+  if (e.key === 'Escape') {
+    if (state.isGenerating && state.abortController) {
+      state.abortController.abort();
+    } else {
+      closeModals();
+      $('#lightbox').classList.remove('open');
+    }
+  }
+  // Ctrl/Cmd + B — toggle sidebar
+  if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+    e.preventDefault();
+    $('#app').classList.toggle('sidebar-collapsed');
+  }
+  // Ctrl/Cmd + K — search models
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    renderModelGroups();
+    openModal('#modelModal');
+    setTimeout(() => $('#modelSearchInput').focus(), 100);
+  }
+  // Ctrl/Cmd + N — new chat
+  if ((e.ctrlKey || e.metaKey) && e.key === 'n' && !e.shiftKey) {
+    e.preventDefault();
+    createNewChat();
+  }
+});
+
+// Save current model to localStorage when changed
+const origUpdateModelUI = updateModelUI;
+updateModelUI = function() {
+  origUpdateModelUI();
+  if (state.currentModel) localStorage.setItem('hapuppy-model', state.currentModel);
+};
+
+// Boot
+init().catch(e => {
+  console.error(e);
+  toast('Lỗi khởi tạo: ' + e.message, 'error');
+});
+
+/* ================================================
+   PWA: Inline Service Worker (cache app shell)
+   Service worker is self-contained as a blob URL,
+   so no separate file needed. Works on https only.
+   ================================================ */
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  const swCode = `
+    const CACHE = 'hapuppy-v1';
+    self.addEventListener('install', e => self.skipWaiting());
+    self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+    self.addEventListener('fetch', e => {
+      const url = new URL(e.request.url);
+      // Never cache API calls (they need to hit network)
+      if (url.hostname.includes('hapuppy.com') || url.pathname.includes('/v1/')) return;
+      // Cache-first for everything else (CDN libs, app shell)
+      e.respondWith(
+        caches.match(e.request).then(hit => hit || fetch(e.request).then(res => {
+          if (res.ok && (e.request.method === 'GET')) {
+            const clone = res.clone();
+            caches.open(CACHE).then(c => c.put(e.request, clone)).catch(()=>{});
+          }
+          return res;
+        }).catch(() => caches.match('./')))
+      );
+    });
+  `;
+  try {
+    const blob = new Blob([swCode], { type: 'application/javascript' });
+    const swUrl = URL.createObjectURL(blob);
+    // Note: blob-URL service workers have limited scope - they only cache fetched resources.
+    // For full PWA install, hosting on GitHub Pages/Netlify with a real sw.js is better,
+    // but this works as a soft-cache layer.
+    navigator.serviceWorker.register(swUrl).catch(err => {
+      console.log('[PWA] Service worker registration skipped:', err.message);
+    });
+  } catch (e) {
+    console.log('[PWA] Service worker not available:', e.message);
+  }
+}
+
+// Detect when running as installed PWA (Add to Home Screen)
+if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+  document.documentElement.classList.add('pwa-installed');
+  console.log('[PWA] Running as installed app');
+}
+
+// Prompt iOS users that they can add to home screen
+function checkIOSInstallPrompt() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isStandalone = window.navigator.standalone === true;
+  if (isIOS && !isStandalone && !localStorage.getItem('hapuppy-ios-prompt-dismissed')) {
+    setTimeout(() => {
+      toast('💡 Thêm vào Màn hình chính: bấm nút Share rồi "Add to Home Screen"', 'info', 8000);
+      localStorage.setItem('hapuppy-ios-prompt-dismissed', '1');
+    }, 3000);
+  }
+}
+checkIOSInstallPrompt();
+</script>
+</body>
+</html>
